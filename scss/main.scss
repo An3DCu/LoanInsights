@@ -1,0 +1,39 @@
+// Entry point. Builds Bootstrap from source with my variables,
+// and imports only the parts the site uses.
+
+// 1. Functions first, so my overrides can use them.
+@import "bootstrap/scss/functions";
+
+// 2. My overrides, before Bootstrap's defaults.
+@import "variables";
+
+// 3. Bootstrap's variables, maps and mixins.
+@import "bootstrap/scss/variables";
+@import "bootstrap/scss/variables-dark";
+@import "bootstrap/scss/maps";
+@import "bootstrap/scss/mixins";
+@import "bootstrap/scss/utilities";
+
+// 4. Base styles.
+@import "bootstrap/scss/root";
+@import "bootstrap/scss/reboot";
+@import "bootstrap/scss/type";
+@import "bootstrap/scss/containers";
+@import "bootstrap/scss/grid";
+
+// 5. Components in use.
+@import "bootstrap/scss/tables";
+@import "bootstrap/scss/forms";
+@import "bootstrap/scss/buttons";
+@import "bootstrap/scss/transitions";
+@import "bootstrap/scss/nav";
+@import "bootstrap/scss/navbar";
+@import "bootstrap/scss/card";
+@import "bootstrap/scss/alert";
+
+// 6. Helpers and the utility classes (d-flex, mt-3, ...). Utilities go last so they win.
+@import "bootstrap/scss/helpers";
+@import "bootstrap/scss/utilities/api";
+
+// 7. My own components.
+@import "components";
