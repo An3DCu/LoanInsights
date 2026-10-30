@@ -1,0 +1,6 @@
+// My own components, built on Bootstrap's variables rather than against them.
+
+// Money lines up in columns when every digit has the same width.
+.num {
+  font-variant-numeric: tabular-nums;
+}

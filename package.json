@@ -1,0 +1,25 @@
+{
+  "name": "loan-insights",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Loan calculator, comparison and payoff planner that runs entirely in the browser.",
+  "license": "MIT",
+  "author": "Anad Čuruković",
+  "type": "module",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "build": "npm run vendor && npm run build:css",
+    "build:css": "sass scss/main.scss css/main.css --style=compressed --source-map --load-path=node_modules --quiet-deps --silence-deprecation=import",
+    "watch:css": "sass scss/main.scss css/main.css --watch --source-map --load-path=node_modules --quiet-deps --silence-deprecation=import",
+    "vendor": "node scripts/copy-vendor.js",
+    "test": "node --test"
+  },
+  "devDependencies": {
+    "bootstrap": "5.3.8",
+    "chart.js": "4.6.1",
+    "jquery": "4.0.0",
+    "sass": "1.107.0"
+  }
+}

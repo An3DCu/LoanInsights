@@ -1,0 +1,22 @@
+# dependencies
+node_modules/
+
+# build output (made by npm run build)
+css/
+vendor/
+
+# secrets
+.env
+.env.*
+!.env.example
+
+# OS / editor
+desktop.ini
+Thumbs.db
+.DS_Store
+.idea/
+.vscode/
+.claude/
+
+# logs
+*.log
