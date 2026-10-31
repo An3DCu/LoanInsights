@@ -1,2 +1,111 @@
 <h1>Compare two loans</h1>
 <p>Put two offers side by side. A lower payment can still cost more in the end, so this shows the total interest and the total paid for each.</p>
+
+<form id="compare-form" novalidate>
+  <div class="alert alert-danger d-none" role="alert" data-form-error></div>
+
+  <div class="row g-4">
+    <div class="col-md-6">
+      <fieldset>
+        <legend class="h5">Loan A</legend>
+        <div class="mb-3">
+          <label class="form-label" for="a-principal">Amount borrowed (€)</label>
+          <input class="form-control" id="a-principal" name="a.principal" type="text" inputmode="decimal" autocomplete="off" value="20,000" aria-describedby="a-principal-error">
+          <div class="invalid-feedback" id="a-principal-error"></div>
+        </div>
+        <div class="mb-3">
+          <label class="form-label" for="a-rate">Yearly interest rate (%)</label>
+          <input class="form-control" id="a-rate" name="a.annualRate" type="text" inputmode="decimal" autocomplete="off" value="6" aria-describedby="a-rate-error">
+          <div class="invalid-feedback" id="a-rate-error"></div>
+        </div>
+        <div class="mb-3">
+          <label class="form-label" for="a-years">Term (years)</label>
+          <input class="form-control" id="a-years" name="a.years" type="text" inputmode="decimal" autocomplete="off" value="5" aria-describedby="a-years-error">
+          <div class="invalid-feedback" id="a-years-error"></div>
+        </div>
+        <div class="mb-3">
+          <label class="form-label" for="a-frequency">Payments</label>
+          <select class="form-select" id="a-frequency" name="a.periodsPerYear">
+            <option value="12" selected>Monthly</option>
+            <option value="26">Bi-weekly (every two weeks)</option>
+          </select>
+        </div>
+      </fieldset>
+    </div>
+
+    <div class="col-md-6">
+      <fieldset>
+        <legend class="h5">Loan B</legend>
+        <div class="mb-3">
+          <label class="form-label" for="b-principal">Amount borrowed (€)</label>
+          <input class="form-control" id="b-principal" name="b.principal" type="text" inputmode="decimal" autocomplete="off" value="20,000" aria-describedby="b-principal-error">
+          <div class="invalid-feedback" id="b-principal-error"></div>
+        </div>
+        <div class="mb-3">
+          <label class="form-label" for="b-rate">Yearly interest rate (%)</label>
+          <input class="form-control" id="b-rate" name="b.annualRate" type="text" inputmode="decimal" autocomplete="off" value="4.5" aria-describedby="b-rate-error">
+          <div class="invalid-feedback" id="b-rate-error"></div>
+        </div>
+        <div class="mb-3">
+          <label class="form-label" for="b-years">Term (years)</label>
+          <input class="form-control" id="b-years" name="b.years" type="text" inputmode="decimal" autocomplete="off" value="7" aria-describedby="b-years-error">
+          <div class="invalid-feedback" id="b-years-error"></div>
+        </div>
+        <div class="mb-3">
+          <label class="form-label" for="b-frequency">Payments</label>
+          <select class="form-select" id="b-frequency" name="b.periodsPerYear">
+            <option value="12" selected>Monthly</option>
+            <option value="26">Bi-weekly (every two weeks)</option>
+          </select>
+        </div>
+      </fieldset>
+    </div>
+  </div>
+
+  <button class="btn btn-primary" type="submit">Compare</button>
+</form>
+
+<section class="d-none mt-4" id="compare-results" aria-labelledby="compare-results-heading">
+  <h2 class="h4" id="compare-results-heading">Result</h2>
+  <p class="lead" aria-live="polite" data-field="sentence"></p>
+
+  <div class="table-responsive">
+    <table class="table num">
+      <caption>Loan A and loan B side by side. The last column is B minus A.</caption>
+      <thead>
+        <tr>
+          <th scope="col"><span class="visually-hidden">Detail</span></th>
+          <th class="text-end" scope="col">Loan A</th>
+          <th class="text-end" scope="col">Loan B</th>
+          <th class="text-end" scope="col">Difference</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr data-row="payment">
+          <th scope="row">Payment</th>
+          <td class="text-end" data-col="a"></td>
+          <td class="text-end" data-col="b"></td>
+          <td class="text-end" data-col="difference"></td>
+        </tr>
+        <tr data-row="time">
+          <th scope="row">Time to pay off</th>
+          <td class="text-end" data-col="a"></td>
+          <td class="text-end" data-col="b"></td>
+          <td class="text-end" data-col="difference"></td>
+        </tr>
+        <tr data-row="totalInterest">
+          <th scope="row">Total interest</th>
+          <td class="text-end" data-col="a"></td>
+          <td class="text-end" data-col="b"></td>
+          <td class="text-end" data-col="difference"></td>
+        </tr>
+        <tr data-row="totalPaid">
+          <th scope="row">Total paid</th>
+          <td class="text-end" data-col="a"></td>
+          <td class="text-end" data-col="b"></td>
+          <td class="text-end" data-col="difference"></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</section>
