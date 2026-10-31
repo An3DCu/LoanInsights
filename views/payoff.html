@@ -1,2 +1,101 @@
 <h1>Pay off faster</h1>
 <p>Start from what you owe today and what you pay now. See how much sooner the loan ends, and how much interest you skip, if you add a little to every payment or switch to paying half every two weeks.</p>
+
+<div class="row g-4">
+  <div class="col-lg-4">
+    <form id="payoff-form" novalidate>
+      <div class="alert alert-danger d-none" role="alert" data-form-error></div>
+
+      <fieldset class="mb-3">
+        <legend class="form-label fs-6">Plan</legend>
+        <div class="form-check">
+          <input class="form-check-input" id="payoff-extra" name="strategy" type="radio" value="extra" checked>
+          <label class="form-check-label" for="payoff-extra">Pay extra with every payment</label>
+        </div>
+        <div class="form-check">
+          <input class="form-check-input" id="payoff-accelerated" name="strategy" type="radio" value="accelerated">
+          <label class="form-check-label" for="payoff-accelerated">Accelerated bi-weekly: half the monthly payment every two weeks</label>
+        </div>
+      </fieldset>
+
+      <div class="mb-3">
+        <label class="form-label" for="payoff-balance">What you owe today (€)</label>
+        <input class="form-control" id="payoff-balance" name="balance" type="text" inputmode="decimal" autocomplete="off" value="150,000" aria-describedby="payoff-balance-error">
+        <div class="invalid-feedback" id="payoff-balance-error"></div>
+      </div>
+      <div class="mb-3">
+        <label class="form-label" for="payoff-rate">Yearly interest rate (%)</label>
+        <input class="form-control" id="payoff-rate" name="annualRate" type="text" inputmode="decimal" autocomplete="off" value="5.5" aria-describedby="payoff-rate-error">
+        <div class="invalid-feedback" id="payoff-rate-error"></div>
+      </div>
+      <div class="mb-3">
+        <label class="form-label" for="payoff-payment">
+          <span data-strategy="extra">What you pay now (€)</span>
+          <span class="d-none" data-strategy="accelerated">What you pay each month now (€)</span>
+        </label>
+        <input class="form-control" id="payoff-payment" name="payment" type="text" inputmode="decimal" autocomplete="off" value="1,200" aria-describedby="payoff-payment-error">
+        <div class="invalid-feedback" id="payoff-payment-error"></div>
+      </div>
+      <div class="mb-3" data-strategy="extra">
+        <label class="form-label" for="payoff-frequency">You pay</label>
+        <select class="form-select" id="payoff-frequency" name="periodsPerYear">
+          <option value="12" selected>Monthly</option>
+          <option value="26">Bi-weekly (every two weeks)</option>
+        </select>
+      </div>
+      <div class="mb-3" data-strategy="extra">
+        <label class="form-label" for="payoff-extra-amount">Extra with every payment (€)</label>
+        <input class="form-control" id="payoff-extra-amount" name="extra" type="text" inputmode="decimal" autocomplete="off" value="200" aria-describedby="payoff-extra-error">
+        <div class="invalid-feedback" id="payoff-extra-error"></div>
+      </div>
+      <button class="btn btn-primary" type="submit">Calculate</button>
+    </form>
+  </div>
+
+  <div class="col-lg-8">
+    <section class="d-none" id="payoff-results" aria-labelledby="payoff-results-heading">
+      <h2 class="h4" id="payoff-results-heading">Result</h2>
+      <p class="lead" aria-live="polite" data-field="sentence"></p>
+
+      <div class="table-responsive">
+        <table class="table num">
+          <caption>Your current plan next to the faster one</caption>
+          <thead>
+            <tr>
+              <th scope="col"><span class="visually-hidden">Detail</span></th>
+              <th class="text-end" scope="col">Now</th>
+              <th class="text-end" scope="col" data-field="planHeading">With extra</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr data-row="payment">
+              <th scope="row">Each payment</th>
+              <td class="text-end" data-col="now"></td>
+              <td class="text-end" data-col="plan"></td>
+            </tr>
+            <tr data-row="payments">
+              <th scope="row">Number of payments</th>
+              <td class="text-end" data-col="now"></td>
+              <td class="text-end" data-col="plan"></td>
+            </tr>
+            <tr data-row="time">
+              <th scope="row">Time to pay off</th>
+              <td class="text-end" data-col="now"></td>
+              <td class="text-end" data-col="plan"></td>
+            </tr>
+            <tr data-row="totalInterest">
+              <th scope="row">Total interest</th>
+              <td class="text-end" data-col="now"></td>
+              <td class="text-end" data-col="plan"></td>
+            </tr>
+            <tr data-row="totalPaid">
+              <th scope="row">Total paid</th>
+              <td class="text-end" data-col="now"></td>
+              <td class="text-end" data-col="plan"></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+  </div>
+</div>

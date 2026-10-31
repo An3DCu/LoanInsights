@@ -1,2 +1,66 @@
 <h1>Loan calculator</h1>
 <p>Enter the amount, the interest rate and the term. You get the payment, the total interest, and every payment until the balance reaches zero.</p>
+
+<div class="row g-4">
+  <div class="col-lg-4">
+    <form id="calculator-form" novalidate>
+      <div class="alert alert-danger d-none" role="alert" data-form-error></div>
+
+      <div class="mb-3">
+        <label class="form-label" for="calc-principal">Amount borrowed (€)</label>
+        <input class="form-control" id="calc-principal" name="principal" type="text" inputmode="decimal" autocomplete="off" value="10,000" aria-describedby="calc-principal-error">
+        <div class="invalid-feedback" id="calc-principal-error"></div>
+      </div>
+      <div class="mb-3">
+        <label class="form-label" for="calc-rate">Yearly interest rate (%)</label>
+        <input class="form-control" id="calc-rate" name="annualRate" type="text" inputmode="decimal" autocomplete="off" value="5" aria-describedby="calc-rate-error">
+        <div class="invalid-feedback" id="calc-rate-error"></div>
+      </div>
+      <div class="mb-3">
+        <label class="form-label" for="calc-years">Term (years)</label>
+        <input class="form-control" id="calc-years" name="years" type="text" inputmode="decimal" autocomplete="off" value="5" aria-describedby="calc-years-error">
+        <div class="invalid-feedback" id="calc-years-error"></div>
+      </div>
+      <div class="mb-3">
+        <label class="form-label" for="calc-frequency">Payments</label>
+        <select class="form-select" id="calc-frequency" name="periodsPerYear">
+          <option value="12" selected>Monthly</option>
+          <option value="26">Bi-weekly (every two weeks)</option>
+        </select>
+      </div>
+      <button class="btn btn-primary" type="submit">Calculate</button>
+    </form>
+  </div>
+
+  <div class="col-lg-8">
+    <section class="d-none" id="calculator-results" aria-labelledby="calc-results-heading">
+      <h2 class="h4" id="calc-results-heading">Result</h2>
+      <dl class="row num" aria-live="polite">
+        <dt class="col-sm-6" data-field="paymentLabel">Monthly payment</dt>
+        <dd class="col-sm-6 fs-4" data-field="payment"></dd>
+        <dt class="col-sm-6">Total interest</dt>
+        <dd class="col-sm-6" data-field="totalInterest"></dd>
+        <dt class="col-sm-6">Total paid</dt>
+        <dd class="col-sm-6" data-field="totalPaid"></dd>
+        <dt class="col-sm-6">Number of payments</dt>
+        <dd class="col-sm-6" data-field="payments"></dd>
+      </dl>
+
+      <div class="table-responsive">
+        <table class="table table-sm table-striped num">
+          <caption>Every payment, from the first to the last</caption>
+          <thead>
+            <tr>
+              <th scope="col">No.</th>
+              <th class="text-end" scope="col">Payment</th>
+              <th class="text-end" scope="col">Principal</th>
+              <th class="text-end" scope="col">Interest</th>
+              <th class="text-end" scope="col">Balance</th>
+            </tr>
+          </thead>
+          <tbody data-field="schedule"></tbody>
+        </table>
+      </div>
+    </section>
+  </div>
+</div>

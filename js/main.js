@@ -1,5 +1,9 @@
 // Starts the app: the route table, a few site-wide handlers, then the router.
 import { createRouter } from './router.js';
+// Each page binds its form once, on document, when its module loads.
+import './pages/calculator.js';
+import './pages/compare.js';
+import './pages/payoff.js';
 
 const routes = {
   '/': { view: 'home' },
