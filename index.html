@@ -8,7 +8,7 @@
   <link rel="stylesheet" href="css/main.css">
 </head>
 <body class="d-flex flex-column min-vh-100">
-  <a class="visually-hidden-focusable" href="#app">Skip to content</a>
+  <a class="skip-link visually-hidden-focusable" href="#app">Skip to content</a>
 
   <header>
     <nav class="navbar navbar-expand-md border-bottom" aria-label="Main">
@@ -30,9 +30,11 @@
     </nav>
   </header>
 
-  <main id="app" class="container flex-grow-1 py-4">
-    <h1>Loan Insights</h1>
-    <p>Work out loan payments, compare two loans and see what extra payments save.</p>
+  <main id="app" class="container flex-grow-1 py-4" tabindex="-1">
+    <noscript>
+      <h1>Loan Insights</h1>
+      <p>The calculators run in your browser, so they need JavaScript turned on.</p>
+    </noscript>
   </main>
 
   <footer class="border-top py-3">
@@ -43,5 +45,6 @@
 
   <script src="vendor/jquery.min.js"></script>
   <script src="vendor/bootstrap.bundle.min.js"></script>
+  <script type="module" src="js/main.js"></script>
 </body>
 </html>

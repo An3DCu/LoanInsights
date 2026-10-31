@@ -1,0 +1,20 @@
+<h1>About</h1>
+<p class="lead">Loan Insights works out loan payments, compares two loans and shows what paying extra saves. Everything is calculated in your browser.</p>
+
+<h2 class="h4 mt-4">How the math works</h2>
+<p>Every payment is the standard annuity formula, the same one banks and spreadsheet <code>PMT()</code> functions use:</p>
+<p><code>payment = P × r / (1 − (1 + r)<sup>−n</sup>)</code></p>
+<p>Here <code>P</code> is the amount borrowed, <code>r</code> is the yearly rate divided by the number of payments in a year, and <code>n</code> is the number of payments. With no interest, the payment is simply <code>P / n</code>.</p>
+
+<h2 class="h4 mt-4">Rounding</h2>
+<p>Every line of the schedule is rounded to the cent, the way a bank statement is. The small differences that rounding leaves behind all go into the last payment, so the balance ends at exactly 0.00.</p>
+
+<h2 class="h4 mt-4">Bi-weekly payments</h2>
+<p>There are two kinds, and they are not the same thing:</p>
+<ul>
+  <li><strong>Bi-weekly</strong> (Calculator and Compare): 26 payments a year, each at a 26th of the yearly rate, over the same term.</li>
+  <li><strong>Accelerated bi-weekly</strong> (Pay off faster): pay half your monthly payment every two weeks. That's 26 halves, or 13 full payments a year instead of 12, so the loan ends years earlier.</li>
+</ul>
+
+<h2 class="h4 mt-4">Your data</h2>
+<p>Nothing you type leaves your browser. There are no accounts, no tracking and no server doing the math.</p>
