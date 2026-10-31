@@ -1,6 +1,88 @@
 // My own components, built on Bootstrap's variables rather than against them.
 
+// Colors Bootstrap has no variable for, as CSS custom properties that switch with
+// the color mode. The `li-` prefix keeps them apart from Bootstrap's `bs-`.
+:root,
+[data-bs-theme="light"] {
+  --li-rule: #{$rule};
+  --li-stamp: #{$stamp};
+}
+
+@include color-mode(dark, true) {
+  --li-rule: #{$rule-dark};
+  --li-stamp: #{$stamp-dark};
+}
+
 // Money lines up in columns when every digit has the same width.
+// Labels inside a .num block (dt, th) stay in the text face, so only values are mono.
 .num {
+  font-family: $font-family-monospace;
   font-variant-numeric: tabular-nums;
+
+  dt,
+  th {
+    font-family: $font-family-base;
+  }
+}
+
+// Links: the underline sits a little lower, like ink on a ruled line.
+a {
+  text-underline-offset: .2em;
+}
+
+// The header ends in a double rule, like the top of a ledger page.
+.site-header {
+  border-bottom: 3px double var(--bs-border-color);
+}
+
+.site-footer {
+  border-top: 1px solid var(--li-rule);
+  color: var(--bs-secondary-color);
+}
+
+// Column headings set small and spaced, like the printed headings in a savings book.
+.table > thead th {
+  font-family: $font-family-base;
+  font-size: $font-size-sm;
+  font-weight: $font-weight-normal;
+  color: var(--bs-secondary-color);
+  text-transform: uppercase;
+  letter-spacing: .06em;
+}
+
+// Dark mode. Bootstrap compiles button and checkbox colors at build time, so a navy
+// button would disappear on the navy page. These swap them to cream ink.
+@include color-mode(dark) {
+  .btn-primary {
+    @include button-variant(
+      $ink-dark,
+      $ink-dark,
+      $color: $paper-dark,
+      $hover-background: tint-color($ink-dark, 20%),
+      $hover-border: tint-color($ink-dark, 20%),
+      $hover-color: $paper-dark,
+      $active-background: shade-color($ink-dark, 10%),
+      $active-border: shade-color($ink-dark, 10%),
+      $active-color: $paper-dark
+    );
+  }
+
+  .btn-outline-primary {
+    @include button-outline-variant($ink-dark, $color-hover: $paper-dark);
+  }
+
+  .form-check-input:checked {
+    background-color: $ink-dark;
+    border-color: $ink-dark;
+  }
+
+  .form-check-input:checked[type="radio"] {
+    --#{$prefix}form-check-bg-image: #{escape-svg(url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='-4 -4 8 8'><circle r='2' fill='#{$paper-dark}'/></svg>"))};
+  }
+}
+
+// The light/dark switch shows when it's on.
+.theme-toggle[aria-pressed="true"] {
+  background-color: var(--bs-body-color);
+  color: var(--bs-body-bg);
 }

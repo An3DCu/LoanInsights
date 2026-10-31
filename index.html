@@ -5,13 +5,15 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Loan Insights</title>
   <meta name="description" content="Work out loan payments, compare two loans and see what extra payments save. Runs in your browser.">
+  <meta name="color-scheme" content="light dark">
+  <script src="js/theme.js"></script>
   <link rel="stylesheet" href="css/main.css">
 </head>
 <body class="d-flex flex-column min-vh-100">
   <a class="skip-link visually-hidden-focusable" href="#app">Skip to content</a>
 
-  <header>
-    <nav class="navbar navbar-expand-md border-bottom" aria-label="Main">
+  <header class="site-header">
+    <nav class="navbar navbar-expand-md" aria-label="Main">
       <div class="container">
         <a class="navbar-brand" href="#/">Loan Insights</a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#main-nav" aria-controls="main-nav" aria-expanded="false" aria-label="Toggle navigation">
@@ -24,6 +26,9 @@
             <li class="nav-item"><a class="nav-link" href="#/compare">Compare</a></li>
             <li class="nav-item"><a class="nav-link" href="#/payoff">Pay off faster</a></li>
             <li class="nav-item"><a class="nav-link" href="#/about">About</a></li>
+            <li class="nav-item d-flex align-items-center ms-md-3 py-2 py-md-0">
+              <button class="btn btn-sm btn-outline-primary theme-toggle" id="theme-toggle" type="button" aria-pressed="false">Lamplight</button>
+            </li>
           </ul>
         </div>
       </div>
@@ -37,7 +42,7 @@
     </noscript>
   </main>
 
-  <footer class="border-top py-3">
+  <footer class="site-footer py-3">
     <div class="container small">
       Loan Insights. Everything is calculated in your browser. Nothing is sent anywhere.
     </div>
