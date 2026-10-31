@@ -1,4 +1,102 @@
 // Bootstrap variable overrides. They must come before Bootstrap's own variables,
 // because Bootstrap declares everything with !default and keeps the first value it sees.
 //
-// Round 1 runs on Bootstrap defaults. The Ledger palette and type land here in Round 2.
+// The look: an old bank savings book. Cream paper, navy ink, thin rules, a stamp red.
+// In dark mode it's the same book read by lamplight, not the colors inverted.
+// Contrast on paper: ink 12.7:1, stamp 5.3:1, pencil 5.3:1, edge 3.5:1 (controls).
+
+// Light
+$paper: #f6f1e7;
+$ink: #1f2a44;
+$pencil: #5e6474; // secondary text
+$rule: #c9bfae;   // decorative lines only, too faint for anything that must be seen
+$edge: #8a7f6c;   // borders of inputs and other controls
+$stamp: #b23a2e;
+
+// Dark (lamplight). Contrast on paper: ink 13.8:1, stamp 5.8:1, pencil 6.9:1, edge 4:1.
+$paper-dark: #141b2d;
+$ink-dark: #ede6d6;
+$pencil-dark: #a8a496;
+$rule-dark: #2e3a55;
+$edge-dark: #6e7a96;
+$stamp-dark: #e0786b;
+
+// Theme colors. The whole map is replaced, so every key Bootstrap expects is here.
+$primary: $ink;
+$secondary: $pencil;
+$success: #2f6b4f;
+$info: #2c5d7c;
+$warning: #8a5a00;
+$danger: $stamp;
+$light: $paper;
+$dark: $ink;
+
+$theme-colors: (
+  "primary": $primary,
+  "secondary": $secondary,
+  "success": $success,
+  "info": $info,
+  "warning": $warning,
+  "danger": $danger,
+  "light": $light,
+  "dark": $dark,
+);
+
+// Page
+$body-bg: $paper;
+$body-color: $ink;
+$body-secondary-color: $pencil;
+$body-emphasis-color: $ink; // Bootstrap's default is pure black; nav links and table text use it
+$border-color: $edge;
+
+$body-bg-dark: $paper-dark;
+$body-color-dark: $ink-dark;
+$body-secondary-color-dark: $pencil-dark;
+$body-emphasis-color-dark: $ink-dark;
+$border-color-dark: $edge-dark;
+
+// Type
+$font-family-sans-serif: "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", roboto, "Helvetica Neue", arial, sans-serif;
+$font-family-monospace: "IBM Plex Mono", ui-monospace, sfmono-regular, menlo, consolas, monospace;
+$font-family-base: $font-family-sans-serif;
+// Only 400 and 600 are loaded, so nothing asks for a weight that doesn't exist.
+$headings-font-weight: 600;
+$font-weight-bold: 600;
+$font-weight-bolder: 600;
+$lead-font-weight: 400;
+
+// Shape: square corners like a printed form.
+$border-radius: .125rem;
+$border-radius-sm: .125rem;
+$border-radius-lg: .25rem;
+
+// Space stays at 1rem on purpose. Gutters like g-4 are multiples of $spacer, but the
+// container's side padding comes from $grid-gutter-width. At 1.125rem a g-4 row's
+// negative margin (13.5px) outgrew that padding (12px), and phones scrolled sideways.
+$spacer: 1rem;
+
+// Links are ink, underlined, and turn stamp red on hover.
+$link-color: $ink;
+$link-hover-color: $stamp;
+$link-color-dark: $ink-dark;
+$link-hover-color-dark: $stamp-dark;
+
+// Nav links. Bootstrap's default is the text color at 65% opacity, which measured
+// 4.43:1 on the cream paper, just under the 4.5 minimum. Solid pencil passes in
+// both modes (5.3:1 and 6.9:1).
+$navbar-light-color: var(--bs-secondary-color);
+$navbar-light-hover-color: var(--li-stamp);
+$navbar-light-active-color: var(--bs-emphasis-color);
+
+// Focus rings follow the text color through a CSS variable, so they stay visible
+// in both modes (a fixed navy ring would vanish on the dark page).
+$focus-ring-color: rgba(var(--bs-body-color-rgb), .35);
+$input-btn-focus-color: $focus-ring-color;
+$input-focus-border-color: var(--bs-body-color);
+
+// Tables use the faint rule color, set per mode in _components.scss.
+$table-border-color: var(--li-rule);
+
+// Validation messages in stamp red, in both modes.
+$form-invalid-color-dark: $stamp-dark;
+$form-invalid-border-color-dark: $stamp-dark;

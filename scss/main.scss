@@ -1,6 +1,10 @@
 // Entry point. Builds Bootstrap from source with my variables,
 // and imports only the parts the site uses.
 
+// Bootstrap 5.3 still uses @import, so this file does too. My own map code uses the
+// newer module functions, which is why `sass:map` is loaded here.
+@use "sass:map";
+
 // 1. Functions first, so my overrides can use them.
 @import "bootstrap/scss/functions";
 
@@ -14,7 +18,21 @@
 @import "bootstrap/scss/mixins";
 @import "bootstrap/scss/utilities";
 
-// 4. Base styles.
+// Keep only the utility classes the site uses. Bootstrap generates every utility at
+// every breakpoint, which is most of its CSS. Add a key here before using a new one.
+$utilities-in-use: (
+  "align-items", "display", "flex-direction", "flex-grow", "font-size", "height",
+  "margin-bottom", "margin-start", "margin-top", "min-viewport-height", "padding-y",
+  "text-align",
+);
+$trimmed-utilities: ();
+@each $key in $utilities-in-use {
+  $trimmed-utilities: map.merge($trimmed-utilities, ($key: map.get($utilities, $key)));
+}
+$utilities: $trimmed-utilities;
+
+// 4. Fonts and base styles.
+@import "fonts";
 @import "bootstrap/scss/root";
 @import "bootstrap/scss/reboot";
 @import "bootstrap/scss/type";

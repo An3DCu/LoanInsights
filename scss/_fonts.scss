@@ -1,0 +1,19 @@
+// IBM Plex, self-hosted from vendor/fonts (copied there by `npm run vendor`).
+// Latin only, and only the weights the site uses. `swap` shows the fallback font
+// right away and swaps Plex in when it arrives, so text is never invisible.
+
+@mixin plex($family, $file, $weight, $style: normal) {
+  @font-face {
+    font-family: $family;
+    font-style: $style;
+    font-weight: $weight;
+    font-display: swap;
+    src: url("../vendor/fonts/#{$file}.woff2") format("woff2");
+  }
+}
+
+@include plex("IBM Plex Sans", "ibm-plex-sans-latin-400-normal", 400);
+@include plex("IBM Plex Sans", "ibm-plex-sans-latin-400-italic", 400, italic);
+@include plex("IBM Plex Sans", "ibm-plex-sans-latin-600-normal", 600);
+@include plex("IBM Plex Mono", "ibm-plex-mono-latin-400-normal", 400);
+@include plex("IBM Plex Mono", "ibm-plex-mono-latin-600-normal", 600);
