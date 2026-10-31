@@ -1,0 +1,92 @@
+// Paper texture: grain on the paper, a sheet lying on a desk, a guilloche ribbon
+// under the nav, and in dark mode a lamp glowing at the top of the page.
+//
+// Everything is drawn by the browser from tiny SVGs and gradients. No photos.
+// Text contrast is checked against the darkest speck of grain, which is why the
+// grain has a hard ceiling (its alpha), and why pencil and stamp are a shade deeper.
+
+@use "sass:color";
+@use "sass:math";
+
+// Grain: SVG noise (feTurbulence), recolored to one flat color whose alpha follows
+// the noise. $alpha is the strongest a speck can get.
+@function grain($color, $alpha) {
+  $r: math.div(color.channel($color, "red", $space: rgb), 255);
+  $g: math.div(color.channel($color, "green", $space: rgb), 255);
+  $b: math.div(color.channel($color, "blue", $space: rgb), 255);
+  // Alpha = noise x 1.5 - 0.25, scaled by $alpha. Noise sits mostly between 0.2 and
+  // 0.8, so specks range from almost nothing up to about $alpha.
+  $a-scale: 1.5 * $alpha;
+  $a-offset: -.25 * $alpha;
+  @return escape-svg(url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='180' height='180'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='3' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 #{$r} 0 0 0 0 #{$g} 0 0 0 0 #{$b} #{$a-scale} 0 0 0 #{$a-offset}'/></filter><rect width='100%' height='100%' filter='url(#n)'/></svg>"));
+}
+
+// Strength, picked by comparing three side by side in the browser (the middle one).
+// The contrast numbers in _variables.scss are worked out for these exact values, so
+// raising any of them means checking pencil and stamp again.
+$grain-alpha: .07;
+$grain-alpha-dark: .05;
+$ribbon-opacity: .26;
+$lamp-alpha: .1;
+
+:root {
+  --li-desk: #{$desk};
+  --li-grain: #{grain(#000, $grain-alpha)};
+  --li-lamp: none;
+  --li-ribbon-opacity: #{$ribbon-opacity};
+  --li-sheet-shadow: 0 1px 2px #{rgba($ink, .08)}, 0 .5rem 1.5rem #{rgba($ink, .08)};
+}
+
+@include color-mode(dark, true) {
+  --li-desk: #{$desk-dark};
+  --li-grain: #{grain($ink-dark, $grain-alpha-dark)};
+  --li-lamp: radial-gradient(ellipse 60rem 22rem at 50% 0, #{rgba($lamp, $lamp-alpha)}, transparent);
+  --li-sheet-shadow: 0 1px 2px #{rgba(#000, .35)}, 0 .5rem 1.5rem #{rgba(#000, .35)};
+}
+
+// The desk.
+body {
+  background-color: var(--li-desk);
+  background-image: var(--li-lamp), var(--li-grain);
+}
+
+// The sheet of paper the content sits on. On phones it fills the width.
+.sheet {
+  background-color: var(--bs-body-bg);
+  background-image: var(--li-grain);
+  border-block: 1px solid var(--li-rule);
+  box-shadow: var(--li-sheet-shadow);
+
+  @include media-breakpoint-up(sm) {
+    margin-block: 1.5rem;
+    border-inline: 1px solid var(--li-rule);
+  }
+}
+
+// The guilloche ribbon under the nav. The SVG is used as a mask, so the lines take
+// the current text color and follow light and dark mode on their own.
+.site-header::after {
+  display: block;
+  height: .75rem;
+  content: "";
+  background-color: var(--bs-secondary-color);
+  -webkit-mask: url("../images/guilloche.svg") repeat-x left center / auto 100%;
+  mask: url("../images/guilloche.svg") repeat-x left center / auto 100%;
+  opacity: var(--li-ribbon-opacity);
+}
+
+// "Increase contrast" in the system settings: plain paper, no decoration.
+@media (prefers-contrast: more) {
+  body,
+  .sheet {
+    background-image: none;
+  }
+
+  .sheet {
+    box-shadow: none;
+  }
+
+  .site-header::after {
+    display: none;
+  }
+}
