@@ -53,5 +53,6 @@ $utilities: $trimmed-utilities;
 @import "bootstrap/scss/helpers";
 @import "bootstrap/scss/utilities/api";
 
-// 7. My own components.
+// 7. My own components and the paper texture.
 @import "components";
+@import "texture";
