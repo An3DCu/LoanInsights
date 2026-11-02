@@ -32,6 +32,31 @@ a {
   text-underline-offset: .2em;
 }
 
+// The wordmark: the name pressed on like a rubber stamp. Capitals come from CSS, so the
+// text itself stays "Loan Insights" for screen readers and search. It doesn't move.
+.wordmark {
+  padding: .15rem .55rem;
+  font-family: $font-family-monospace;
+  font-size: .95rem;
+  font-weight: $font-weight-bold;
+  color: var(--li-stamp);
+  text-transform: uppercase;
+  letter-spacing: .12em;
+  border: 3px double var(--li-stamp);
+  border-radius: $border-radius-lg;
+  transform: rotate(-2deg);
+
+  &:hover,
+  &:focus {
+    color: var(--li-stamp);
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--bs-body-color);
+    outline-offset: 3px;
+  }
+}
+
 // The header ends in a double rule, like the top of a ledger page.
 .site-header {
   border-bottom: 3px double var(--bs-border-color);
@@ -109,6 +134,35 @@ a {
   .form-select {
     width: auto;
   }
+}
+
+// Margin notes: a few words in pencil next to a result, slightly tilted, like a note
+// someone wrote in the margin. Pencil grey, not stamp red, so a note never looks like
+// an error. At this size the handwriting still meets 4.5:1 (it's set in the same pencil
+// color as other secondary text).
+.margin-note {
+  display: inline-block;
+  max-width: 22rem;
+  margin-top: .25rem;
+  font-family: "Caveat", "Segoe Print", "Bradley Hand", cursive;
+  font-size: 1.35rem;
+  font-weight: 500;
+  line-height: 1.15;
+  color: var(--bs-secondary-color);
+  transform: rotate(-1.5deg);
+  transform-origin: left center;
+}
+
+dd .margin-note,
+p.margin-note {
+  display: block;
+  width: fit-content;
+}
+
+// On the receipt, the year 1 note sits on its own line, without a rule under it.
+.receipt-note > td {
+  padding-top: 0;
+  border-bottom: 0;
 }
 
 // Before the first result: a dashed blank on the page, saying what will appear there.

@@ -6,10 +6,11 @@ import { showToast } from './toast.js';
 // the form from a shared link; pages with a chart also return a cleanup from it.
 import * as calculatorPage from './pages/calculator.js';
 import * as comparePage from './pages/compare.js';
+import * as homePage from './pages/home.js';
 import * as payoffPage from './pages/payoff.js';
 
 const routes = {
-  '/': { view: 'home' },
+  '/': { view: 'home', page: homePage },
   '/calculator': { view: 'calculator', title: 'Calculator', page: calculatorPage },
   '/compare': { view: 'compare', title: 'Compare loans', page: comparePage },
   '/payoff': { view: 'payoff', title: 'Pay off faster', page: payoffPage },
@@ -63,6 +64,7 @@ $(document).on('change', '#currency', (event) => {
     // Applied below, just not remembered.
   }
   showCurrencySymbols($('#app'));
+  $(document).trigger('currencychange');
   // Each page has one form; if its result is showing, work it out again.
   if ($('#app section[id$="-results"]:not(.d-none)').length) $('#app form')[0].requestSubmit();
 });

@@ -52,6 +52,11 @@ export function showErrors($form, errors) {
   $first?.trigger('focus');
 }
 
+// A margin note: shown with its text, or hidden when there's nothing true to say (null).
+export function showNote($note, text) {
+  $note.text(text ?? '').toggleClass('d-none', !text);
+}
+
 // Editing a field that was marked wrong clears its mark, and the count at the top
 // follows; the next "Work it out" checks everything again. Bound once, on document.
 $(document).on('input change', 'form .is-invalid', (event) => {

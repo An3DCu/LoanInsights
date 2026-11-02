@@ -46,6 +46,13 @@ export function formatMoneyShort(amount, { currency = current } = {}) {
   return moneyFormat(currency, { short: true }).format(amount);
 }
 
+// The everyday word for one unit, for sentences like "every extra euro".
+const UNIT_NAMES = { EUR: 'euro', BAM: 'mark', USD: 'dollar', GBP: 'pound' };
+
+export function currencyUnit(currency = current) {
+  return UNIT_NAMES[currency];
+}
+
 // Just the sign: "€", "KM", "$", "£". Used in labels like "Amount borrowed (€)".
 export function currencySymbol(currency = current) {
   return moneyFormat(currency).formatToParts(0).find((part) => part.type === 'currency').value;
