@@ -2,7 +2,7 @@
 // accelerated bi-weekly payments.
 import { chartSlot, drawBalanceLines } from '../charts.js';
 import { balanceSentence, payoffSentence } from '../explain.js';
-import { FREQUENCIES, acceleratedBiweekly, payoffWithExtra } from '../finance.js';
+import { FREQUENCIES, acceleratedBiweekly, payoffErrors, payoffWithExtra } from '../finance.js';
 import { formatDuration, formatMoney, formatNumber } from '../format.js';
 import { handleSubmit, readNumber, restoreFromLink } from './forms.js';
 
@@ -24,6 +24,17 @@ $(document).on('change', '#payoff-form [name="strategy"]', (event) => {
     $(this).toggleClass('d-none', $(this).data('strategy') !== strategy);
   });
 });
+
+function check($form) {
+  return payoffErrors({
+    balance: readNumber($form, 'balance'),
+    annualRate: readNumber($form, 'annualRate'),
+    payment: readNumber($form, 'payment'),
+    extra: readNumber($form, 'extra'),
+    periodsPerYear: readNumber($form, 'periodsPerYear'),
+    accelerated: strategyOf($form) === 'accelerated',
+  });
+}
 
 function calculate($form) {
   const balance = readNumber($form, 'balance');
@@ -84,4 +95,11 @@ function render($section, result) {
   });
 }
 
-handleSubmit('#payoff-form', '#payoff-results', calculate, render, '/payoff');
+handleSubmit({
+  form: '#payoff-form',
+  results: '#payoff-results',
+  check,
+  calculate,
+  render,
+  route: '/payoff',
+});

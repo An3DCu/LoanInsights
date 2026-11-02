@@ -1,5 +1,5 @@
 <h1>Loan calculator</h1>
-<p>Enter the amount, the interest rate and the term. You get the payment, the total interest, and every payment until the balance reaches zero.</p>
+<p>Enter the amount, the yearly rate and the term. You'll get the payment, the total interest, and every payment from the first to the last.</p>
 
 <div class="row g-4">
   <div class="col-lg-4">
@@ -28,11 +28,15 @@
           <option value="26">Bi-weekly (every two weeks)</option>
         </select>
       </div>
-      <button class="btn btn-primary" type="submit">Calculate</button>
+      <button class="btn btn-primary" type="submit">Work it out</button>
     </form>
   </div>
 
   <div class="col-lg-8">
+    <div class="empty-state" data-empty-for="#calculator-results">
+      <p class="empty-state-title">Nothing in the ledger yet.</p>
+      <p>Fill in the loan and work it out. The payment, the interest and the full schedule will be entered here.</p>
+    </div>
     <section class="d-none" id="calculator-results" aria-labelledby="calc-results-heading">
       <h2 class="h4" id="calc-results-heading">Result</h2>
       <dl class="row num" aria-live="polite">

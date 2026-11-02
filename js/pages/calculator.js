@@ -3,7 +3,7 @@ import { chartSlot, drawYearBars } from '../charts.js';
 import { scheduleCsv, scheduleFileName } from '../csv.js';
 import { downloadText } from '../download.js';
 import { interestShareSentence } from '../explain.js';
-import { FREQUENCIES, amortizationSchedule, groupByYear, periodicPayment, summarize } from '../finance.js';
+import { FREQUENCIES, amortizationSchedule, groupByYear, loanErrors, periodicPayment, summarize } from '../finance.js';
 import { formatMoney, formatNumber, splitMoney } from '../format.js';
 import { showToast } from '../toast.js';
 import { handleSubmit, readNumber, restoreFromLink } from './forms.js';
@@ -20,13 +20,17 @@ export function init($root, params) {
   return () => chart.destroy();
 }
 
-function calculate($form) {
-  const loan = {
+function readLoan($form) {
+  return {
     principal: readNumber($form, 'principal'),
     annualRate: readNumber($form, 'annualRate'),
     years: readNumber($form, 'years'),
     periodsPerYear: readNumber($form, 'periodsPerYear'),
   };
+}
+
+function calculate($form) {
+  const loan = readLoan($form);
   const schedule = amortizationSchedule(loan);
   return { loan, schedule, payment: periodicPayment(loan), ...summarize(schedule) };
 }
@@ -113,7 +117,14 @@ function render($section, result) {
   });
 }
 
-handleSubmit('#calculator-form', '#calculator-results', calculate, render, '/calculator');
+handleSubmit({
+  form: '#calculator-form',
+  results: '#calculator-results',
+  check: ($form) => loanErrors(readLoan($form)),
+  calculate,
+  render,
+  route: '/calculator',
+});
 
 $(document).on('click', '#calculator-results [data-action="tear-off"]', () => {
   if (!last) return;

@@ -2,7 +2,7 @@
 import { comparisonCsv } from '../csv.js';
 import { downloadText } from '../download.js';
 import { compareSentence } from '../explain.js';
-import { compareLoans } from '../finance.js';
+import { compareLoans, loanErrors } from '../finance.js';
 import { formatDuration, formatMoney } from '../format.js';
 import { showToast } from '../toast.js';
 import { handleSubmit, readNumber, restoreFromLink } from './forms.js';
@@ -23,6 +23,14 @@ function readLoan($form, key) {
     years: readNumber($form, `${key}.years`),
     periodsPerYear: readNumber($form, `${key}.periodsPerYear`),
   };
+}
+
+// Problems in both loans at once, each named after its loan's field ("b.annualRate").
+function check($form) {
+  return ['a', 'b'].flatMap((key) => loanErrors(readLoan($form, key)).map((error) => {
+    error.field = `${key}.${error.field}`;
+    return error;
+  }));
 }
 
 function calculate($form) {
@@ -59,7 +67,14 @@ function render($section, { result, samePaymentFrequency }) {
   cell('totalPaid', 'difference', signedMoney(difference.totalPaid));
 }
 
-handleSubmit('#compare-form', '#compare-results', calculate, render, '/compare');
+handleSubmit({
+  form: '#compare-form',
+  results: '#compare-results',
+  check,
+  calculate,
+  render,
+  route: '/compare',
+});
 
 $(document).on('click', '#compare-results [data-action="save-comparison"]', () => {
   if (!last) return;
