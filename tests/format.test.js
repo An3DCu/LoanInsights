@@ -1,7 +1,7 @@
 import { describe, it } from 'node:test';
 import assert from 'node:assert/strict';
 
-import { formatDuration, formatMoney, formatNumber, parseAmount } from '../js/format.js';
+import { formatDuration, formatMoney, formatNumber, parseAmount, splitMoney } from '../js/format.js';
 
 describe('formatMoney', () => {
   it('uses English grouping with the euro sign first', () => {
@@ -18,6 +18,24 @@ describe('formatMoney', () => {
 
   it('can format another currency', () => {
     assert.equal(formatMoney(5, { currency: 'USD' }), 'US$5.00');
+  });
+});
+
+describe('splitMoney', () => {
+  it('separates the currency sign from the number', () => {
+    assert.deepEqual(splitMoney(2264.52), { currency: '€', number: '2,264.52' });
+    assert.deepEqual(splitMoney(0), { currency: '€', number: '0.00' });
+  });
+
+  it('puts the two halves back together as formatMoney does', () => {
+    for (const amount of [1, 999.99, 1234567.8]) {
+      const { currency, number } = splitMoney(amount);
+      assert.equal(currency + number, formatMoney(amount));
+    }
+  });
+
+  it('works for another currency', () => {
+    assert.deepEqual(splitMoney(5, { currency: 'USD' }), { currency: 'US$', number: '5.00' });
   });
 });
 

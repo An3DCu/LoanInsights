@@ -26,6 +26,16 @@ export function formatMoney(amount, { currency = DEFAULT_CURRENCY, signed = fals
   return moneyFormat(currency, signed).format(amount);
 }
 
+// The same money split in two, { currency: '€', number: '2,264.52' }, so a page can
+// show the sign and the number separately (the receipt drops the sign on phones).
+export function splitMoney(amount, { currency = DEFAULT_CURRENCY } = {}) {
+  const parts = moneyFormat(currency, false).formatToParts(amount);
+  return {
+    currency: parts.filter((part) => part.type === 'currency').map((part) => part.value).join(''),
+    number: parts.filter((part) => part.type !== 'currency').map((part) => part.value).join('').trim(),
+  };
+}
+
 const numberFormat = new Intl.NumberFormat(LOCALE);
 
 export function formatNumber(value) {

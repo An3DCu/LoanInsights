@@ -46,21 +46,34 @@
         <dd class="col-sm-6" data-field="payments"></dd>
       </dl>
 
-      <div class="table-responsive">
-        <table class="table table-sm table-striped num">
-          <caption>Every payment, from the first to the last</caption>
-          <thead>
-            <tr>
-              <th scope="col">No.</th>
-              <th class="text-end" scope="col">Payment</th>
-              <th class="text-end" scope="col">Principal</th>
-              <th class="text-end" scope="col">Interest</th>
-              <th class="text-end" scope="col">Balance</th>
-            </tr>
-          </thead>
-          <tbody data-field="schedule"></tbody>
-        </table>
+      <h3 class="h5 mt-4">The schedule</h3>
+      <div class="receipt">
+        <div class="receipt-head">
+          <p class="receipt-title">Loan Insights</p>
+          <p data-field="receiptLoan"></p>
+        </div>
+        <div class="table-responsive">
+          <table class="table table-sm receipt-table num">
+            <caption>Every payment, grouped by year. Open a year to see its payments.</caption>
+            <thead>
+              <tr>
+                <th scope="col">No.</th>
+                <th class="text-end" scope="col">Paid</th>
+                <th class="text-end" scope="col">Principal</th>
+                <th class="text-end" scope="col">Interest</th>
+                <th class="text-end" scope="col">Balance</th>
+              </tr>
+            </thead>
+          </table>
+        </div>
+        <dl class="receipt-totals num">
+          <dt>Total interest</dt>
+          <dd data-field="receiptInterest"></dd>
+          <dt>Total paid</dt>
+          <dd data-field="receiptPaid"></dd>
+        </dl>
       </div>
+      <button class="btn btn-outline-primary mt-4" type="button" data-action="tear-off">Tear off (CSV)</button>
     </section>
   </div>
 </div>

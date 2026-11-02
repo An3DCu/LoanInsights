@@ -48,6 +48,8 @@ $utilities: $trimmed-utilities;
 @import "bootstrap/scss/navbar";
 @import "bootstrap/scss/card";
 @import "bootstrap/scss/alert";
+@import "bootstrap/scss/toasts";
+@import "bootstrap/scss/close";
 
 // 6. Helpers and the utility classes (d-flex, mt-3, ...). Utilities go last so they win.
 @import "bootstrap/scss/helpers";
@@ -56,3 +58,4 @@ $utilities: $trimmed-utilities;
 // 7. My own components and the paper texture.
 @import "components";
 @import "texture";
+@import "receipt";

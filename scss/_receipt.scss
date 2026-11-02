@@ -1,0 +1,206 @@
+// The schedule printed as a till receipt: whiter paper than the sheet, monospace
+// type, dashed rules, and a torn edge at the bottom. More years make a longer strip.
+//
+// Contrast on the receipt, at the darkest speck of grain: ink 11.5:1 and pencil 5.5:1
+// (light), ink 11.2:1 and pencil 5.6:1 (dark).
+
+$receipt-paper: #fbf8f1;
+$receipt-paper-dark: #1a2236;
+$receipt-tear: .625rem; // the height of the zigzag
+
+:root {
+  --li-receipt: #{$receipt-paper};
+}
+
+@include color-mode(dark, true) {
+  --li-receipt: #{$receipt-paper-dark};
+}
+
+.receipt {
+  position: relative;
+  max-width: 40rem;
+  padding: 1.25rem 1rem 1rem;
+  margin-bottom: $receipt-tear; // room for the torn edge, which hangs below
+  font-family: $font-family-monospace;
+  font-size: $font-size-sm;
+  background-color: var(--li-receipt);
+  background-image: var(--li-grain);
+  box-shadow: 0 1px 3px rgba(var(--bs-body-color-rgb), .12);
+
+  // On phones the five money columns are tight: smaller type and less padding let
+  // the whole row, Balance included, fit without scrolling sideways.
+  @include media-breakpoint-down(sm) {
+    padding-inline: .5rem;
+    font-size: .75rem;
+
+    .receipt-table > :not(caption) > * > * {
+      padding-inline: .15rem;
+    }
+
+    // The column headings ("PRINCIPAL") would otherwise be the widest thing in the row.
+    .receipt-table > thead th {
+      font-size: inherit;
+      letter-spacing: .02em;
+    }
+  }
+
+  // The torn edge: a strip of the same paper, cut into a zigzag by a mask.
+  &::after {
+    position: absolute;
+    top: 100%;
+    right: 0;
+    left: 0;
+    height: $receipt-tear;
+    content: "";
+    background-color: var(--li-receipt);
+    background-image: var(--li-grain);
+    // The `/` here is CSS (position / size), so the size is interpolated to stop Sass
+    // from reading it as a division.
+    -webkit-mask: conic-gradient(from -45deg at bottom, #0000, #000 1deg 89deg, #0000 90deg) 50% / #{$receipt-tear * 2} 100%;
+    mask: conic-gradient(from -45deg at bottom, #0000, #000 1deg 89deg, #0000 90deg) 50% / #{$receipt-tear * 2} 100%;
+  }
+}
+
+.receipt-head {
+  padding-bottom: .75rem;
+  margin-bottom: .5rem;
+  text-align: center;
+  border-bottom: 1px dashed var(--bs-border-color);
+
+  p {
+    margin-bottom: 0;
+  }
+}
+
+.receipt-title {
+  font-weight: $font-weight-bold;
+  text-transform: uppercase;
+  letter-spacing: .2em;
+}
+
+// The table sits on the receipt paper, not on Bootstrap's table background.
+.receipt-table {
+  --bs-table-bg: transparent;
+  margin-bottom: 0;
+
+  > :not(caption) > * > * {
+    border-bottom-style: dashed;
+  }
+
+  caption {
+    font-family: $font-family-base;
+  }
+}
+
+// A year's row: the year is a button that opens its payments.
+.receipt-year > tr > * {
+  font-weight: $font-weight-bold;
+}
+
+.receipt-toggle {
+  padding: 0;
+  font: inherit;
+  color: inherit;
+  white-space: nowrap;
+  background: none;
+  border: 0;
+
+  // A small arrow that turns when the year is open.
+  &::before {
+    display: inline-block;
+    margin-right: .375rem;
+    content: "\25B8"; // ▸
+    transition: transform .15s ease-in-out;
+  }
+
+  &[aria-expanded="true"]::before {
+    transform: rotate(90deg);
+  }
+
+  &:focus-visible {
+    outline: 2px solid currentcolor;
+    outline-offset: 2px;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    &::before {
+      transition: none;
+    }
+  }
+}
+
+// Phones show "Y1" and plain numbers; the full "Year 1" and the euro signs stay for
+// screen readers (visually hidden). Together that makes five columns fit at 375px.
+.year-short {
+  display: none;
+}
+
+@include media-breakpoint-down(sm) {
+  .year-long,
+  .receipt-currency {
+    @include visually-hidden();
+  }
+
+  .year-short {
+    display: inline;
+  }
+}
+
+// A table body can't animate its height, so the months appear without a slide.
+.receipt-payments.collapsing {
+  transition: none;
+}
+
+.receipt-payments > tr > * {
+  color: var(--bs-secondary-color);
+}
+
+.receipt-totals {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: .25rem 1rem;
+  padding-top: .75rem;
+  margin: .5rem 0 0;
+  border-top: 1px dashed var(--bs-border-color);
+
+  dt {
+    font-weight: $font-weight-normal;
+    text-transform: uppercase;
+    letter-spacing: .06em;
+  }
+
+  dd {
+    margin: 0;
+    text-align: right;
+  }
+}
+
+// Toasts: bottom right, above everything. The stack spans the screen so a toast
+// (350px wide) shrinks to fit a phone instead of pushing the page sideways. Clicks
+// pass through the empty part of the stack.
+.toast-stack {
+  position: fixed;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: $zindex-toast;
+  display: grid;
+  gap: .5rem;
+  justify-items: end;
+  padding: 1rem;
+  pointer-events: none;
+
+  .toast {
+    pointer-events: auto;
+  }
+}
+
+.toast-row {
+  display: flex;
+  align-items: center;
+
+  .btn-close {
+    flex-shrink: 0;
+    margin-right: .75rem;
+  }
+}

@@ -7,6 +7,7 @@ import {
   acceleratedBiweekly,
   amortizationSchedule,
   compareLoans,
+  groupByYear,
   payoffWithExtra,
   periodicPayment,
   summarize,
@@ -86,6 +87,45 @@ describe('amortizationSchedule', () => {
     assert.ok(rows.every((row) => row.interest === 0));
     assert.equal(rows[0].payment, 277.78);
     assert.equal(rows.at(-1).payment, 277.70); // 10,000 - 35 x 277.78
+  });
+});
+
+describe('groupByYear', () => {
+  it('makes one group per year with that year\'s payments', () => {
+    const years = groupByYear(amortizationSchedule(loans[1]), monthly);
+    assert.equal(years.length, 30);
+    assert.ok(years.every((year) => year.payments.length === 12));
+    assert.deepEqual(years.map((year) => year.year).slice(0, 3), [1, 2, 3]);
+  });
+
+  it('uses 26 payments to a year for bi-weekly loans', () => {
+    const years = groupByYear(amortizationSchedule(loans[2]), biweekly);
+    assert.equal(years.length, 5);
+    assert.ok(years.every((year) => year.payments.length === 26));
+  });
+
+  it('puts leftover payments in a shorter last year', () => {
+    const schedule = amortizationSchedule({ principal: 5000, annualRate: 4, years: 1.5, periodsPerYear: monthly });
+    const years = groupByYear(schedule, monthly);
+    assert.deepEqual(years.map((year) => year.payments.length), [12, 6]);
+  });
+
+  for (const loan of loans) {
+    it(`adds up to the schedule's totals, to the cent: ${loan.principal} over ${loan.years} years`, () => {
+      const schedule = amortizationSchedule(loan);
+      const years = groupByYear(schedule, loan.periodsPerYear);
+      const total = summarize(schedule);
+      assert.equal(years.reduce((sum, year) => sum + cents(year.paid), 0), cents(total.totalPaid));
+      assert.equal(years.reduce((sum, year) => sum + cents(year.interest), 0), cents(total.totalInterest));
+      assert.equal(years.reduce((sum, year) => sum + cents(year.principal), 0), cents(loan.principal));
+      assert.equal(years.at(-1).balance, 0);
+    });
+  }
+
+  it('shows interest shrinking year by year', () => {
+    const years = groupByYear(amortizationSchedule(loans[1]), monthly);
+    assert.ok(years[0].interest > years[0].principal, 'year 1 of a 30 year loan is mostly interest');
+    assert.ok(years.at(-1).interest < years.at(-1).principal);
   });
 });
 

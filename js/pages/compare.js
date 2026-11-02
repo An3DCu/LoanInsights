@@ -1,8 +1,14 @@
 // Compare page: two loans side by side and one sentence on what the difference means.
+import { comparisonCsv } from '../csv.js';
+import { downloadText } from '../download.js';
 import { compareSentence } from '../explain.js';
 import { compareLoans } from '../finance.js';
 import { formatDuration, formatMoney } from '../format.js';
+import { showToast } from '../toast.js';
 import { handleSubmit, readNumber } from './forms.js';
+
+// The last comparison, kept for the "Save as CSV" button.
+let last = null;
 
 function readLoan($form, key) {
   return {
@@ -21,6 +27,7 @@ function calculate($form) {
 
 function render($section, { result, samePaymentFrequency }) {
   const { a, b, difference } = result;
+  last = { result, samePaymentFrequency };
   const cell = (row, col, text) => $section.find(`[data-row="${row}"] [data-col="${col}"]`).text(text);
   const signedMoney = (amount) => formatMoney(amount, { signed: true });
 
@@ -47,3 +54,10 @@ function render($section, { result, samePaymentFrequency }) {
 }
 
 handleSubmit('#compare-form', '#compare-results', calculate, render);
+
+$(document).on('click', '#compare-results [data-action="save-comparison"]', () => {
+  if (!last) return;
+  const fileName = 'loan-comparison.csv';
+  downloadText(fileName, comparisonCsv(last.result, { samePaymentFrequency: last.samePaymentFrequency }));
+  showToast(`Saved as ${fileName}.`);
+});
