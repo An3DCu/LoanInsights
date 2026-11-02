@@ -6,15 +6,17 @@ import { interestShareSentence } from '../explain.js';
 import { FREQUENCIES, amortizationSchedule, groupByYear, periodicPayment, summarize } from '../finance.js';
 import { formatMoney, formatNumber, splitMoney } from '../format.js';
 import { showToast } from '../toast.js';
-import { handleSubmit, readNumber } from './forms.js';
+import { handleSubmit, readNumber, restoreFromLink } from './forms.js';
 
 // The last result, kept for the "Tear off (CSV)" button.
 let last = null;
 const chart = chartSlot();
 
-// Called by the router each time the page is shown. The cleanup it returns runs when
-// the page goes away, so the chart is destroyed with it.
-export function init() {
+// Called by the router each time the page is shown. A shared link fills the form and
+// calculates; the cleanup it returns runs when the page goes away, so the chart is
+// destroyed with it.
+export function init($root, params) {
+  restoreFromLink($root.find('#calculator-form'), params, '/calculator');
   return () => chart.destroy();
 }
 
@@ -29,12 +31,13 @@ function calculate($form) {
   return { loan, schedule, payment: periodicPayment(loan), ...summarize(schedule) };
 }
 
-// The euro sign gets its own span: on phones it's hidden from view (still read out by
-// screen readers) to make room for five columns. The receipt's header names the currency.
+// The currency sign (with its space, for KM) gets its own span: on phones it's hidden
+// from view (still read out by screen readers) to make room for five columns. The
+// receipt's header names the currency.
 function moneyCell(amount) {
-  const { currency, number } = splitMoney(amount);
+  const { currency, separator, number } = splitMoney(amount);
   return $('<td class="text-end">').append(
-    $('<span class="receipt-currency">').text(currency),
+    $('<span class="receipt-currency">').text(currency + separator),
     $('<span>').text(number),
   );
 }
@@ -110,7 +113,7 @@ function render($section, result) {
   });
 }
 
-handleSubmit('#calculator-form', '#calculator-results', calculate, render);
+handleSubmit('#calculator-form', '#calculator-results', calculate, render, '/calculator');
 
 $(document).on('click', '#calculator-results [data-action="tear-off"]', () => {
   if (!last) return;

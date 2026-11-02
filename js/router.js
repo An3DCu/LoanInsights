@@ -17,7 +17,9 @@ function parseHash(hash) {
   return { path, params: new URLSearchParams(query) };
 }
 
-export function createRouter({ routes, notFound, $outlet, $nav }) {
+// onRender($outlet) runs after every page is inserted, before the page's own init,
+// for things every page needs (like the current currency sign in labels).
+export function createRouter({ routes, notFound, $outlet, $nav, onRender }) {
   const fragments = new Map(); // view name -> its HTML, so each file is fetched once
   let cleanup = null;
   let navigation = 0; // counts navigations, so a slow load can't overwrite a newer page
@@ -64,6 +66,7 @@ export function createRouter({ routes, notFound, $outlet, $nav }) {
     $outlet.empty().append($.parseHTML(html));
     document.title = route.title ? `${route.title} · ${APP_NAME}` : APP_NAME;
     markActiveLink(path);
+    onRender?.($outlet);
 
     const result = route.page?.init($outlet, params);
     if (typeof result === 'function') cleanup = result;

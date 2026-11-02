@@ -1,7 +1,18 @@
-import { describe, it } from 'node:test';
+import { afterEach, describe, it } from 'node:test';
 import assert from 'node:assert/strict';
 
-import { formatDuration, formatMoney, formatMoneyShort, formatNumber, parseAmount, splitMoney } from '../js/format.js';
+import {
+  CURRENCIES,
+  currencySymbol,
+  currentCurrency,
+  formatDuration,
+  formatMoney,
+  formatMoneyShort,
+  formatNumber,
+  parseAmount,
+  setCurrency,
+  splitMoney,
+} from '../js/format.js';
 
 describe('formatMoney', () => {
   it('uses English grouping with the euro sign first', () => {
@@ -16,8 +27,32 @@ describe('formatMoney', () => {
     assert.equal(formatMoney(0, { signed: true }), '€0.00');
   });
 
-  it('can format another currency', () => {
-    assert.equal(formatMoney(5, { currency: 'USD' }), 'US$5.00');
+  it('can format another currency, with the local sign', () => {
+    assert.equal(formatMoney(5, { currency: 'USD' }), '$5.00');
+    assert.equal(formatMoney(5, { currency: 'GBP' }), '£5.00');
+    assert.match(formatMoney(10000, { currency: 'BAM' }), /^KM\s10,000\.00$/);
+  });
+});
+
+describe('setCurrency', () => {
+  afterEach(() => setCurrency('EUR'));
+
+  it('changes the default for every money format', () => {
+    setCurrency('GBP');
+    assert.equal(currentCurrency(), 'GBP');
+    assert.equal(formatMoney(1234.5), '£1,234.50');
+    assert.equal(formatMoneyShort(300000), '£300K');
+    assert.equal(currencySymbol(), '£');
+    assert.deepEqual(splitMoney(2264.52), { currency: '£', separator: '', number: '2,264.52' });
+  });
+
+  it('ignores currencies it does not offer', () => {
+    setCurrency('XYZ');
+    assert.equal(currentCurrency(), 'EUR');
+  });
+
+  it('gives the local sign for each currency in the selector', () => {
+    assert.deepEqual(CURRENCIES.map((code) => currencySymbol(code)), ['€', 'KM', '$', '£']);
   });
 });
 
@@ -33,19 +68,25 @@ describe('formatMoneyShort', () => {
 
 describe('splitMoney', () => {
   it('separates the currency sign from the number', () => {
-    assert.deepEqual(splitMoney(2264.52), { currency: '€', number: '2,264.52' });
-    assert.deepEqual(splitMoney(0), { currency: '€', number: '0.00' });
+    assert.deepEqual(splitMoney(2264.52), { currency: '€', separator: '', number: '2,264.52' });
+    assert.deepEqual(splitMoney(0), { currency: '€', separator: '', number: '0.00' });
   });
 
   it('puts the two halves back together as formatMoney does', () => {
     for (const amount of [1, 999.99, 1234567.8]) {
-      const { currency, number } = splitMoney(amount);
-      assert.equal(currency + number, formatMoney(amount));
+      for (const code of CURRENCIES) {
+        const { currency, separator, number } = splitMoney(amount, { currency: code });
+        assert.equal(currency + separator + number, formatMoney(amount, { currency: code }));
+      }
     }
   });
 
   it('works for another currency', () => {
-    assert.deepEqual(splitMoney(5, { currency: 'USD' }), { currency: 'US$', number: '5.00' });
+    assert.deepEqual(splitMoney(5, { currency: 'USD' }), { currency: '$', separator: '', number: '5.00' });
+    const km = splitMoney(1500, { currency: 'BAM' });
+    assert.equal(km.currency, 'KM');
+    assert.match(km.separator, /^\s$/, 'KM keeps the space before the number');
+    assert.equal(km.number, '1,500.00');
   });
 });
 
@@ -84,6 +125,9 @@ describe('parseAmount', () => {
     ['10,000', 10000],
     ['1,234,567.89', 1234567.89],
     ['€ 10 000', 10000],
+    ['KM 1.500', 1500],
+    ['$1,200', 1200],
+    ['£ 99.5', 99.5],
     ['10.000', 10000],
     ['10.000,50', 10000.5],
     ['5,5', 5.5],

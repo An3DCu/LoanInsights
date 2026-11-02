@@ -21,7 +21,7 @@
 // Keep only the utility classes the site uses. Bootstrap generates every utility at
 // every breakpoint, which is most of its CSS. Add a key here before using a new one.
 $utilities-in-use: (
-  "align-items", "display", "flex-direction", "flex-grow", "font-size", "height",
+  "display", "flex-direction", "flex-grow", "font-size", "height",
   "margin-bottom", "margin-start", "margin-top", "min-viewport-height", "padding-y",
   "text-align",
 );
