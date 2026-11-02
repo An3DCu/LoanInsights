@@ -26,6 +26,18 @@ export function formatMoney(amount, { currency = DEFAULT_CURRENCY, signed = fals
   return moneyFormat(currency, signed).format(amount);
 }
 
+// Short money for chart axes, where space is tight: €2.3K, €300K, €1.2M.
+const shortMoneyFormat = new Intl.NumberFormat(LOCALE, {
+  style: 'currency',
+  currency: DEFAULT_CURRENCY,
+  notation: 'compact',
+  maximumFractionDigits: 1,
+});
+
+export function formatMoneyShort(amount) {
+  return shortMoneyFormat.format(amount);
+}
+
 // The same money split in two, { currency: '€', number: '2,264.52' }, so a page can
 // show the sign and the number separately (the receipt drops the sign on phones).
 export function splitMoney(amount, { currency = DEFAULT_CURRENCY } = {}) {

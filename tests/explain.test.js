@@ -1,8 +1,8 @@
 import { describe, it } from 'node:test';
 import assert from 'node:assert/strict';
 
-import { compareSentence, payoffSentence } from '../js/explain.js';
-import { FREQUENCIES, compareLoans, payoffWithExtra } from '../js/finance.js';
+import { balanceSentence, compareSentence, interestShareSentence, payoffSentence } from '../js/explain.js';
+import { FREQUENCIES, amortizationSchedule, compareLoans, groupByYear, payoffWithExtra } from '../js/finance.js';
 
 const diff = (payment, totalInterest, years) => ({ difference: { payment, totalInterest, years } });
 
@@ -52,6 +52,36 @@ describe('compareSentence', () => {
     const sentence = compareSentence(compareLoans(a, b));
     assert.match(sentence, /^Loan B's payment is €[\d,.]+ lower, but it costs €[\d,.]+ (more|less) in interest/);
     assert.match(sentence, /takes 2 years longer\.$/);
+  });
+});
+
+describe('interestShareSentence', () => {
+  const yearsOf = (loan) => groupByYear(amortizationSchedule(loan), loan.periodsPerYear);
+
+  it('compares the first and the last year', () => {
+    const years = yearsOf({ principal: 200000, annualRate: 6, years: 30, periodsPerYear: FREQUENCIES.monthly });
+    // Checked with a separate cent-by-cent Python Decimal run: year 1 is 11,933.19 interest
+    // of 14,389.20 paid (82.9%), year 30 is 457.01 of 14,390.24 (3.2%).
+    assert.equal(interestShareSentence(years), 'In year 1, 83% of what you pay goes to interest. By year 30, it\'s 3%.');
+  });
+
+  it('handles a one year loan', () => {
+    const years = yearsOf({ principal: 1200, annualRate: 10, years: 1, periodsPerYear: FREQUENCIES.monthly });
+    assert.match(interestShareSentence(years), /^Over the year, \d+% of what you pay goes to interest\.$/);
+  });
+
+  it('handles a loan without interest', () => {
+    const years = yearsOf({ principal: 1200, annualRate: 0, years: 2, periodsPerYear: FREQUENCIES.monthly });
+    assert.equal(interestShareSentence(years), 'There\'s no interest, so every payment goes to the loan itself.');
+  });
+});
+
+describe('balanceSentence', () => {
+  it('names both plans', () => {
+    assert.equal(
+      balanceSentence(15 + 7 / 12, 12 + 4 / 12, 'with the extra payment'),
+      'The balance reaches zero after 15 years and 7 months as you pay now, and after 12 years and 4 months with the extra payment.',
+    );
   });
 });
 

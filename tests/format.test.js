@@ -1,7 +1,7 @@
 import { describe, it } from 'node:test';
 import assert from 'node:assert/strict';
 
-import { formatDuration, formatMoney, formatNumber, parseAmount, splitMoney } from '../js/format.js';
+import { formatDuration, formatMoney, formatMoneyShort, formatNumber, parseAmount, splitMoney } from '../js/format.js';
 
 describe('formatMoney', () => {
   it('uses English grouping with the euro sign first', () => {
@@ -18,6 +18,16 @@ describe('formatMoney', () => {
 
   it('can format another currency', () => {
     assert.equal(formatMoney(5, { currency: 'USD' }), 'US$5.00');
+  });
+});
+
+describe('formatMoneyShort', () => {
+  it('shortens big amounts for chart axes', () => {
+    assert.equal(formatMoneyShort(2264.52), '€2.3K');
+    assert.equal(formatMoneyShort(300000), '€300K');
+    assert.equal(formatMoneyShort(1250000), '€1.3M');
+    assert.equal(formatMoneyShort(0), '€0');
+    assert.equal(formatMoneyShort(850), '€850');
   });
 });
 

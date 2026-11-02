@@ -1,6 +1,8 @@
 // Calculator page: one loan, its summary, and the schedule printed as a receipt.
+import { chartSlot, drawYearBars } from '../charts.js';
 import { scheduleCsv, scheduleFileName } from '../csv.js';
 import { downloadText } from '../download.js';
+import { interestShareSentence } from '../explain.js';
 import { FREQUENCIES, amortizationSchedule, groupByYear, periodicPayment, summarize } from '../finance.js';
 import { formatMoney, formatNumber, splitMoney } from '../format.js';
 import { showToast } from '../toast.js';
@@ -8,6 +10,13 @@ import { handleSubmit, readNumber } from './forms.js';
 
 // The last result, kept for the "Tear off (CSV)" button.
 let last = null;
+const chart = chartSlot();
+
+// Called by the router each time the page is shown. The cleanup it returns runs when
+// the page goes away, so the chart is destroyed with it.
+export function init() {
+  return () => chart.destroy();
+}
 
 function calculate($form) {
   const loan = {
@@ -86,10 +95,19 @@ function render($section, result) {
 
   // A longer loan makes a longer receipt. Every row is built first and inserted in
   // one go, so the page reflows once.
-  const rows = groupByYear(schedule, loan.periodsPerYear).flatMap(yearRows);
+  const years = groupByYear(schedule, loan.periodsPerYear);
   const $table = $section.find('.receipt-table');
   $table.children('tbody').remove();
-  $table.append(rows);
+  $table.append(years.flatMap(yearRows));
+
+  // The chart's story in words: visible under the chart, and the canvas's label.
+  const sentence = interestShareSentence(years);
+  show('chartSummary', sentence);
+  const canvas = $section.find('.chart canvas').attr('aria-label', `Bar chart of principal and interest per year. ${sentence}`)[0];
+  chart.show(() => drawYearBars(canvas, years)).catch((error) => {
+    console.error(error);
+    show('chartSummary', `${sentence} (The chart couldn't load, but the numbers above and below are complete.)`);
+  });
 }
 
 handleSubmit('#calculator-form', '#calculator-results', calculate, render);
