@@ -32,6 +32,38 @@ a {
   text-underline-offset: .2em;
 }
 
+// One focus mark for every control: a solid ring in the text color, with a gap so it
+// reads apart from the control's own border. Bootstrap's soft glow measured 2.6:1
+// around the navy button, under the 3:1 a focus mark needs.
+:focus-visible,
+.btn:focus-visible,
+.form-control:focus,
+.form-select:focus,
+.form-check-input:focus-visible,
+.nav-link:focus-visible,
+.navbar-toggler:focus-visible,
+.btn-close:focus-visible {
+  outline: 2px solid var(--bs-body-color);
+  outline-offset: 2px;
+  box-shadow: none;
+}
+
+// The router and the skip link move focus to the heading or the page, so reading
+// starts there. Neither is a control, so neither gets a ring.
+[tabindex="-1"]:focus-visible {
+  outline: 0;
+}
+
+// A tool card is one big link. The ring goes round the whole card, not the title.
+.card:has(.stretched-link:focus-visible) {
+  outline: 2px solid var(--bs-body-color);
+  outline-offset: 2px;
+
+  .stretched-link:focus-visible {
+    outline: 0;
+  }
+}
+
 // The wordmark: the name pressed on like a rubber stamp. Capitals come from CSS, so the
 // text itself stays "Loan Insights" for screen readers and search. It doesn't move.
 .wordmark {

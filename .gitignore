@@ -20,3 +20,6 @@ Thumbs.db
 
 # logs
 *.log
+
+# local before/after screenshots, kept out of the repo
+docs/screenshots/

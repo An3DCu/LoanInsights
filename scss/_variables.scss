@@ -89,6 +89,11 @@ $link-hover-color: $stamp;
 $link-color-dark: $ink-dark;
 $link-hover-color-dark: $stamp-dark;
 
+// Code is ink too. Bootstrap's pink measured 4:1 on paper; the mono font already
+// sets code apart.
+$code-color: $ink;
+$code-color-dark: $ink-dark;
+
 // Nav links. Bootstrap's default is the text color at 65% opacity, which measured
 // 4.43:1 on the cream paper, just under the 4.5 minimum. Solid pencil passes in
 // both modes (5.3:1 and 6.9:1).
