@@ -4,6 +4,7 @@ import assert from 'node:assert/strict';
 import {
   CURRENCIES,
   currencySymbol,
+  currencyUnit,
   currentCurrency,
   formatDuration,
   formatMoney,
@@ -53,6 +54,12 @@ describe('setCurrency', () => {
 
   it('gives the local sign for each currency in the selector', () => {
     assert.deepEqual(CURRENCIES.map((code) => currencySymbol(code)), ['€', 'KM', '$', '£']);
+  });
+
+  it('names one unit of each currency, following the selected one', () => {
+    assert.deepEqual(CURRENCIES.map((code) => currencyUnit(code)), ['euro', 'mark', 'dollar', 'pound']);
+    setCurrency('USD');
+    assert.equal(currencyUnit(), 'dollar');
   });
 });
 

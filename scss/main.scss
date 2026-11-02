@@ -5,6 +5,12 @@
 // newer module functions, which is why `sass:map` is loaded here.
 @use "sass:map";
 
+// Bootstrap's MIT notice at the top of the built CSS. Bootstrap's own entry file adds
+// it, but this one imports the parts directly, so it's added here. A /*! comment
+// survives compression.
+@import "bootstrap/scss/mixins/banner";
+@include bsBanner("");
+
 // 1. Functions first, so my overrides can use them.
 @import "bootstrap/scss/functions";
 

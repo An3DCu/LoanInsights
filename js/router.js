@@ -48,7 +48,9 @@ export function createRouter({ routes, notFound, $outlet, $nav, onRender }) {
   async function render() {
     const id = ++navigation;
     const { path, params } = parseHash(window.location.hash);
-    const route = routes[path] ?? notFound;
+    // Only the table's own routes: "#constructor" or "#__proto__" would otherwise
+    // match properties every object has, and show a load error instead of the 404.
+    const route = Object.hasOwn(routes, path) ? routes[path] : notFound;
 
     let html;
     try {
