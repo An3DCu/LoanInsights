@@ -27,32 +27,74 @@ const fromCents = (cents) => cents / 100;
 
 function requireNumber(field, value) {
   if (typeof value !== 'number' || !Number.isFinite(value)) {
-    throw new LoanInputError(field, 'Enter a number.');
+    throw new LoanInputError(field, 'That doesn\'t read as a number. Digits only, please.');
   }
 }
 
 function checkAmount(field, value) {
   requireNumber(field, value);
-  if (value <= 0) throw new LoanInputError(field, 'Enter an amount above zero.');
-  if (value > LIMITS.maxAmount) throw new LoanInputError(field, 'That amount is too large.');
+  if (value <= 0) throw new LoanInputError(field, 'The amount has to be more than zero.');
+  if (value > LIMITS.maxAmount) throw new LoanInputError(field, 'That\'s more than this ledger handles.');
 }
 
 function checkRate(value) {
   requireNumber('annualRate', value);
-  if (value < 0) throw new LoanInputError('annualRate', 'The rate can\'t be negative.');
-  if (value > LIMITS.maxRate) throw new LoanInputError('annualRate', `The rate can't be above ${LIMITS.maxRate}%.`);
+  if (value < 0) throw new LoanInputError('annualRate', 'A rate can\'t be below zero.');
+  if (value > LIMITS.maxRate) throw new LoanInputError('annualRate', `Rates above ${LIMITS.maxRate}% aren't handled here.`);
 }
 
 function checkFrequency(periodsPerYear) {
   if (!Object.values(FREQUENCIES).includes(periodsPerYear)) {
-    throw new LoanInputError('periodsPerYear', 'Choose monthly or bi-weekly payments.');
+    throw new LoanInputError('periodsPerYear', 'Pick monthly or bi-weekly payments.');
   }
 }
 
 function checkYears(years, periodsPerYear) {
   requireNumber('years', years);
-  if (years > LIMITS.maxYears) throw new LoanInputError('years', `The term can't be longer than ${LIMITS.maxYears} years.`);
-  if (Math.round(years * periodsPerYear) < 1) throw new LoanInputError('years', 'The term is too short for even one payment.');
+  if (years > LIMITS.maxYears) throw new LoanInputError('years', `Terms over ${LIMITS.maxYears} years aren't handled here.`);
+  if (Math.round(years * periodsPerYear) < 1) throw new LoanInputError('years', 'The term is too short for a single payment.');
+}
+
+function checkExtra(extra) {
+  requireNumber('extra', extra);
+  if (extra < 0) throw new LoanInputError('extra', 'The extra amount can\'t be below zero.');
+  if (extra > LIMITS.maxAmount) throw new LoanInputError('extra', 'That\'s more than this ledger handles.');
+}
+
+// Every problem with a set of inputs at once, instead of stopping at the first, so a
+// form can mark all the fields that need fixing in one go. These run the same checks
+// the calculations below run.
+function collect(checks) {
+  const errors = [];
+  for (const check of checks) {
+    try {
+      check();
+    } catch (error) {
+      if (!(error instanceof LoanInputError)) throw error;
+      errors.push(error);
+    }
+  }
+  return errors;
+}
+
+export function loanErrors({ principal, annualRate, years, periodsPerYear }) {
+  return collect([
+    () => checkAmount('principal', principal),
+    () => checkRate(annualRate),
+    () => checkFrequency(periodsPerYear),
+    () => checkYears(years, periodsPerYear),
+  ]);
+}
+
+// Accelerated bi-weekly has no extra amount or frequency to check.
+export function payoffErrors({ balance, annualRate, payment, extra, periodsPerYear, accelerated = false }) {
+  const checks = [
+    () => checkAmount('balance', balance),
+    () => checkRate(annualRate),
+    () => checkAmount('payment', payment),
+  ];
+  if (!accelerated) checks.push(() => checkExtra(extra), () => checkFrequency(periodsPerYear));
+  return collect(checks);
 }
 
 // ---------------------------------------------------------------------------
@@ -190,10 +232,10 @@ function payDown(balanceCents, r, paymentCents, periodsPerYear) {
   for (let number = 1; balance > 0; number++) {
     const interest = Math.round(balance * r);
     if (paymentCents <= interest) {
-      throw new LoanInputError('payment', 'This payment doesn\'t cover the interest, so the loan would never be paid off.');
+      throw new LoanInputError('payment', 'This payment doesn\'t cover the interest. The balance would never reach zero.');
     }
     if (number > maxPayments) {
-      throw new LoanInputError('payment', `At this payment the loan takes more than ${LIMITS.maxYears} years to pay off.`);
+      throw new LoanInputError('payment', `At this payment the loan would run past ${LIMITS.maxYears} years.`);
     }
     const principalPart = Math.min(paymentCents - interest, balance);
     balance -= principalPart;
@@ -211,9 +253,7 @@ export function payoffWithExtra({ balance, annualRate, payment, extra, periodsPe
   checkAmount('balance', balance);
   checkRate(annualRate);
   checkAmount('payment', payment);
-  requireNumber('extra', extra);
-  if (extra < 0) throw new LoanInputError('extra', 'The extra payment can\'t be negative.');
-  if (extra > LIMITS.maxAmount) throw new LoanInputError('extra', 'That amount is too large.');
+  checkExtra(extra);
   checkFrequency(periodsPerYear);
 
   const r = annualRate / 100 / periodsPerYear;

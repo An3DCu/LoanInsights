@@ -8,6 +8,8 @@ import {
   amortizationSchedule,
   compareLoans,
   groupByYear,
+  loanErrors,
+  payoffErrors,
   payoffWithExtra,
   periodicPayment,
   summarize,
@@ -269,5 +271,43 @@ describe('input checks', () => {
       () => payoffWithExtra({ balance: 1000, annualRate: 5, payment: 100, extra: -1, periodsPerYear: monthly }),
       (error) => error instanceof LoanInputError && error.field === 'extra',
     );
+  });
+});
+
+describe('loanErrors', () => {
+  const good = { principal: 10000, annualRate: 5, years: 5, periodsPerYear: monthly };
+  const fields = (errors) => errors.map((error) => error.field);
+
+  it('finds nothing wrong with a good loan', () => {
+    assert.deepEqual(loanErrors(good), []);
+  });
+
+  it('reports every bad field at once, not just the first', () => {
+    const errors = loanErrors({ principal: Number.NaN, annualRate: -1, years: 0, periodsPerYear: monthly });
+    assert.deepEqual(fields(errors), ['principal', 'annualRate', 'years']);
+    assert.ok(errors.every((error) => error instanceof LoanInputError));
+  });
+
+  it('agrees with the calculation on what is wrong', () => {
+    const bad = { ...good, annualRate: 150 };
+    const [error] = loanErrors(bad);
+    assert.throws(() => amortizationSchedule(bad), (thrown) => thrown.message === error.message);
+  });
+});
+
+describe('payoffErrors', () => {
+  const good = { balance: 150000, annualRate: 5.5, payment: 1200, extra: 200, periodsPerYear: monthly };
+
+  it('checks the extra amount and frequency for the extra plan', () => {
+    const errors = payoffErrors({ ...good, extra: -5, periodsPerYear: 7 });
+    assert.deepEqual(errors.map((error) => error.field), ['extra', 'periodsPerYear']);
+  });
+
+  it('skips them for accelerated bi-weekly, which has neither', () => {
+    assert.deepEqual(payoffErrors({ ...good, extra: Number.NaN, periodsPerYear: 7, accelerated: true }), []);
+  });
+
+  it('does not judge whether the payment covers the interest (the calculation does)', () => {
+    assert.deepEqual(payoffErrors({ ...good, payment: 1 }), []);
   });
 });

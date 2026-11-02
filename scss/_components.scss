@@ -111,6 +111,23 @@ a {
   }
 }
 
+// Before the first result: a dashed blank on the page, saying what will appear there.
+.empty-state {
+  padding: 1.25rem;
+  color: var(--bs-secondary-color);
+  border: 1px dashed var(--bs-border-color);
+
+  p:last-child {
+    margin-bottom: 0;
+  }
+}
+
+.empty-state-title {
+  margin-bottom: .25rem;
+  font-weight: $font-weight-bold;
+  color: var(--bs-body-color);
+}
+
 // The buttons under a result: CSV, Copy link.
 .result-actions {
   display: flex;
