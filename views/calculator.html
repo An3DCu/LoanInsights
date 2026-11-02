@@ -7,7 +7,7 @@
       <div class="alert alert-danger d-none" role="alert" data-form-error></div>
 
       <div class="mb-3">
-        <label class="form-label" for="calc-principal">Amount borrowed (€)</label>
+        <label class="form-label" for="calc-principal">Amount borrowed (<span data-currency-symbol>€</span>)</label>
         <input class="form-control" id="calc-principal" name="principal" type="text" inputmode="decimal" autocomplete="off" value="10,000" aria-describedby="calc-principal-error">
         <div class="invalid-feedback" id="calc-principal-error"></div>
       </div>
@@ -81,7 +81,10 @@
           <dd data-field="receiptPaid"></dd>
         </dl>
       </div>
-      <button class="btn btn-outline-primary mt-4" type="button" data-action="tear-off">Tear off (CSV)</button>
+      <div class="result-actions mt-4">
+        <button class="btn btn-outline-primary" type="button" data-action="tear-off">Tear off (CSV)</button>
+        <button class="btn btn-outline-primary" type="button" data-action="copy-link">Copy link</button>
+      </div>
     </section>
   </div>
 </div>

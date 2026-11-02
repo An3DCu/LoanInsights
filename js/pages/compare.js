@@ -5,10 +5,16 @@ import { compareSentence } from '../explain.js';
 import { compareLoans } from '../finance.js';
 import { formatDuration, formatMoney } from '../format.js';
 import { showToast } from '../toast.js';
-import { handleSubmit, readNumber } from './forms.js';
+import { handleSubmit, readNumber, restoreFromLink } from './forms.js';
 
 // The last comparison, kept for the "Save as CSV" button.
 let last = null;
+
+// Called by the router each time the page is shown: a shared link fills both loans
+// and compares them.
+export function init($root, params) {
+  restoreFromLink($root.find('#compare-form'), params, '/compare');
+}
 
 function readLoan($form, key) {
   return {
@@ -53,7 +59,7 @@ function render($section, { result, samePaymentFrequency }) {
   cell('totalPaid', 'difference', signedMoney(difference.totalPaid));
 }
 
-handleSubmit('#compare-form', '#compare-results', calculate, render);
+handleSubmit('#compare-form', '#compare-results', calculate, render, '/compare');
 
 $(document).on('click', '#compare-results [data-action="save-comparison"]', () => {
   if (!last) return;

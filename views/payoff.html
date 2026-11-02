@@ -19,7 +19,7 @@
       </fieldset>
 
       <div class="mb-3">
-        <label class="form-label" for="payoff-balance">What you owe today (€)</label>
+        <label class="form-label" for="payoff-balance">What you owe today (<span data-currency-symbol>€</span>)</label>
         <input class="form-control" id="payoff-balance" name="balance" type="text" inputmode="decimal" autocomplete="off" value="150,000" aria-describedby="payoff-balance-error">
         <div class="invalid-feedback" id="payoff-balance-error"></div>
       </div>
@@ -30,8 +30,8 @@
       </div>
       <div class="mb-3">
         <label class="form-label" for="payoff-payment">
-          <span data-strategy="extra">What you pay now (€)</span>
-          <span class="d-none" data-strategy="accelerated">What you pay each month now (€)</span>
+          <span data-strategy="extra">What you pay now (<span data-currency-symbol>€</span>)</span>
+          <span class="d-none" data-strategy="accelerated">What you pay each month now (<span data-currency-symbol>€</span>)</span>
         </label>
         <input class="form-control" id="payoff-payment" name="payment" type="text" inputmode="decimal" autocomplete="off" value="1,200" aria-describedby="payoff-payment-error">
         <div class="invalid-feedback" id="payoff-payment-error"></div>
@@ -44,7 +44,7 @@
         </select>
       </div>
       <div class="mb-3" data-strategy="extra">
-        <label class="form-label" for="payoff-extra-amount">Extra with every payment (€)</label>
+        <label class="form-label" for="payoff-extra-amount">Extra with every payment (<span data-currency-symbol>€</span>)</label>
         <input class="form-control" id="payoff-extra-amount" name="extra" type="text" inputmode="decimal" autocomplete="off" value="200" aria-describedby="payoff-extra-error">
         <div class="invalid-feedback" id="payoff-extra-error"></div>
       </div>
@@ -104,6 +104,10 @@
         </div>
         <figcaption data-field="chartSummary"></figcaption>
       </figure>
+
+      <div class="result-actions mt-4">
+        <button class="btn btn-outline-primary" type="button" data-action="copy-link">Copy link</button>
+      </div>
     </section>
   </div>
 </div>

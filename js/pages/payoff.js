@@ -4,13 +4,15 @@ import { chartSlot, drawBalanceLines } from '../charts.js';
 import { balanceSentence, payoffSentence } from '../explain.js';
 import { FREQUENCIES, acceleratedBiweekly, payoffWithExtra } from '../finance.js';
 import { formatDuration, formatMoney, formatNumber } from '../format.js';
-import { handleSubmit, readNumber } from './forms.js';
+import { handleSubmit, readNumber, restoreFromLink } from './forms.js';
 
 const strategyOf = ($form) => $form.find('[name="strategy"]:checked').val();
 const chart = chartSlot();
 
-// Called by the router each time the page is shown; the cleanup destroys the chart.
-export function init() {
+// Called by the router each time the page is shown. A shared link fills the form and
+// calculates; the cleanup destroys the chart.
+export function init($root, params) {
+  restoreFromLink($root.find('#payoff-form'), params, '/payoff');
   return () => chart.destroy();
 }
 
@@ -82,4 +84,4 @@ function render($section, result) {
   });
 }
 
-handleSubmit('#payoff-form', '#payoff-results', calculate, render);
+handleSubmit('#payoff-form', '#payoff-results', calculate, render, '/payoff');

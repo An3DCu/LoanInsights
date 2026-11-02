@@ -100,6 +100,24 @@ a {
   color: var(--bs-secondary-color);
 }
 
+// Currency and Lamplight sit side by side at the end of the nav.
+.nav-settings {
+  display: flex;
+  gap: .5rem;
+  align-items: center;
+
+  .form-select {
+    width: auto;
+  }
+}
+
+// The buttons under a result: CSV, Copy link.
+.result-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .5rem;
+}
+
 // The light/dark switch shows when it's on.
 .theme-toggle[aria-pressed="true"] {
   background-color: var(--bs-body-color);

@@ -26,7 +26,14 @@
             <li class="nav-item"><a class="nav-link" href="#/compare">Compare</a></li>
             <li class="nav-item"><a class="nav-link" href="#/payoff">Pay off faster</a></li>
             <li class="nav-item"><a class="nav-link" href="#/about">About</a></li>
-            <li class="nav-item d-flex align-items-center ms-md-3 py-2 py-md-0">
+            <li class="nav-item nav-settings ms-md-3 py-2 py-md-0">
+              <label class="visually-hidden" for="currency">Currency</label>
+              <select class="form-select form-select-sm" id="currency">
+                <option value="EUR">€ EUR</option>
+                <option value="BAM">KM BAM</option>
+                <option value="USD">$ USD</option>
+                <option value="GBP">£ GBP</option>
+              </select>
               <button class="btn btn-sm btn-outline-primary theme-toggle" id="theme-toggle" type="button" aria-pressed="false">Lamplight</button>
             </li>
           </ul>
