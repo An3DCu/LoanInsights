@@ -1,5 +1,5 @@
 <h1>About</h1>
-<p class="lead">Loan Insights works out loan payments, compares two loans and shows what paying extra saves. Everything is calculated in your browser.</p>
+<p class="lead">Loan Insights works out loan payments, compares two loans and shows what paying extra saves.</p>
 
 <h2 class="h4 mt-4">How the math works</h2>
 <p>Every payment is the standard annuity formula, the same one banks and spreadsheet <code>PMT()</code> functions use:</p>
@@ -16,5 +16,67 @@
   <li><strong>Accelerated bi-weekly</strong> (Pay off faster): pay half your monthly payment every two weeks. That's 26 halves, or 13 full payments a year instead of 12, so the loan ends years earlier.</li>
 </ul>
 
+<h2 class="h4 mt-4">Currencies</h2>
+<p>The currency menu changes how amounts are written (€, KM, $ or £), never the math. There are no exchange rates here: 10,000 stays 10,000.</p>
+
 <h2 class="h4 mt-4">Your data</h2>
-<p>Nothing you type leaves your browser. There are no accounts, no tracking and no server doing the math.</p>
+<ul>
+  <li>Nothing you type leaves your browser. There are no accounts, no tracking and no server doing the math.</li>
+  <li>Two settings are kept on this device so they're still there next time: light or dark, and the currency.</li>
+  <li>After a result, the page address holds your numbers, so it can be shared. Anyone you send that link to sees those numbers.</li>
+  <li>CSV files are made in your browser and go straight to your downloads.</li>
+</ul>
+
+<h2 class="h4 mt-4" id="about-stack">How it's built</h2>
+<div class="table-responsive">
+  <table class="table" aria-labelledby="about-stack">
+    <thead>
+      <tr>
+        <th scope="col">Piece</th>
+        <th scope="col">Choice</th>
+        <th scope="col">Why</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <th scope="row">Pages</th>
+        <td>One page plus HTML fragments, swapped in by a small hash router I wrote on jQuery</td>
+        <td>Works on any static host, and back, forward and refresh keep you on the right page</td>
+      </tr>
+      <tr>
+        <th scope="row">DOM and events</th>
+        <td>jQuery 4</td>
+        <td>Event delegation keeps the forms working each time a page is swapped back in</td>
+      </tr>
+      <tr>
+        <th scope="row">Look</th>
+        <td>Bootstrap 5.3, built from Sass with my own variables</td>
+        <td>The savings book theme comes from Bootstrap's own variables, and only the parts in use are built</td>
+      </tr>
+      <tr>
+        <th scope="row">The math</th>
+        <td>A plain JavaScript module, tested in Node</td>
+        <td>No page and no jQuery in it, so every number can be tested on its own</td>
+      </tr>
+      <tr>
+        <th scope="row">Charts</th>
+        <td>Chart.js 4</td>
+        <td>Loaded only when a chart is drawn, so the other pages stay light</td>
+      </tr>
+      <tr>
+        <th scope="row">Fonts</th>
+        <td>IBM Plex Sans and Mono, Caveat</td>
+        <td>Served from this site, so the page makes no outside requests</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<h2 class="h4 mt-4">Credits</h2>
+<ul>
+  <li><a href="https://jquery.com/" rel="noopener noreferrer">jQuery</a>, <a href="https://getbootstrap.com/" rel="noopener noreferrer">Bootstrap</a> and <a href="https://www.chartjs.org/" rel="noopener noreferrer">Chart.js</a>, under the MIT license.</li>
+  <li><a href="https://github.com/IBM/plex" rel="noopener noreferrer">IBM Plex</a> and <a href="https://github.com/googlefonts/caveat" rel="noopener noreferrer">Caveat</a>, under the SIL Open Font License 1.1. The license files sit next to the fonts.</li>
+  <li>Everything else, the guilloche and the paper grain included, is drawn by code in this project.</li>
+</ul>
+
+<p class="mt-4">Made by Anad Čuruković. More of my work is at <a href="https://an3dcu.github.io/" rel="noopener noreferrer">an3dcu.github.io</a>.</p>

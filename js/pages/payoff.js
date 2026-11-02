@@ -1,10 +1,10 @@
 // Pay off faster page: the current plan next to either an extra payment or
 // accelerated bi-weekly payments.
 import { chartSlot, drawBalanceLines } from '../charts.js';
-import { balanceSentence, payoffSentence } from '../explain.js';
+import { balanceSentence, payoffNote, payoffSentence } from '../explain.js';
 import { FREQUENCIES, acceleratedBiweekly, payoffErrors, payoffWithExtra } from '../finance.js';
 import { formatDuration, formatMoney, formatNumber } from '../format.js';
-import { handleSubmit, readNumber, restoreFromLink } from './forms.js';
+import { handleSubmit, readNumber, restoreFromLink, showNote } from './forms.js';
 
 const strategyOf = ($form) => $form.find('[name="strategy"]:checked').val();
 const chart = chartSlot();
@@ -77,6 +77,7 @@ function render($section, result) {
   };
 
   $section.find('[data-field="sentence"]').text(payoffSentence(result));
+  showNote($section.find('[data-note="payoff"]'), payoffNote(result));
   $section.find('[data-field="planHeading"]').text(result.planHeading);
 
   cells('payment', formatMoney(now.schedule[0].payment), formatMoney(plan.schedule[0].payment));

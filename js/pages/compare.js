@@ -1,11 +1,11 @@
 // Compare page: two loans side by side and one sentence on what the difference means.
 import { comparisonCsv } from '../csv.js';
 import { downloadText } from '../download.js';
-import { compareSentence } from '../explain.js';
+import { compareNote, compareSentence } from '../explain.js';
 import { compareLoans, loanErrors } from '../finance.js';
 import { formatDuration, formatMoney } from '../format.js';
 import { showToast } from '../toast.js';
-import { handleSubmit, readNumber, restoreFromLink } from './forms.js';
+import { handleSubmit, readNumber, restoreFromLink, showNote } from './forms.js';
 
 // The last comparison, kept for the "Save as CSV" button.
 let last = null;
@@ -46,6 +46,7 @@ function render($section, { result, samePaymentFrequency }) {
   const signedMoney = (amount) => formatMoney(amount, { signed: true });
 
   $section.find('[data-field="sentence"]').text(compareSentence(result, { samePaymentFrequency }));
+  showNote($section.find('[data-note="compare"]'), compareNote(result, { samePaymentFrequency }));
 
   cell('payment', 'a', formatMoney(a.payment));
   cell('payment', 'b', formatMoney(b.payment));

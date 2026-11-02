@@ -1,7 +1,18 @@
 import { describe, it } from 'node:test';
 import assert from 'node:assert/strict';
 
-import { balanceSentence, compareSentence, interestShareSentence, payoffSentence } from '../js/explain.js';
+import {
+  balanceSentence,
+  compareNote,
+  compareSentence,
+  interestNote,
+  interestShareSentence,
+  loanLine,
+  payoffNote,
+  payoffSentence,
+  yearOneNote,
+} from '../js/explain.js';
+import { setCurrency } from '../js/format.js';
 import { FREQUENCIES, amortizationSchedule, compareLoans, groupByYear, payoffWithExtra } from '../js/finance.js';
 
 const diff = (payment, totalInterest, years) => ({ difference: { payment, totalInterest, years } });
@@ -96,5 +107,55 @@ describe('payoffSentence', () => {
   it('says when nothing changes', () => {
     const result = payoffWithExtra({ balance: 1000, annualRate: 5, payment: 100, extra: 0, periodsPerYear: 12 });
     assert.equal(payoffSentence(result), 'This doesn\'t change anything. The loan ends at the same time.');
+  });
+});
+
+describe('margin notes', () => {
+  const yearsOf = (loan) => groupByYear(amortizationSchedule(loan), loan.periodsPerYear);
+  const { monthly } = FREQUENCIES;
+
+  it('interestNote only shows when there is interest', () => {
+    assert.match(interestNote(1322.74), /bank's fee/);
+    assert.equal(interestNote(0), null);
+  });
+
+  it('yearOneNote says "mostly interest" only when it is', () => {
+    assert.equal(yearOneNote(yearsOf({ principal: 200000, annualRate: 6, years: 30, periodsPerYear: monthly })),
+      'Year 1 is mostly interest. It gets better.');
+    assert.equal(yearOneNote(yearsOf({ principal: 10000, annualRate: 5, years: 5, periodsPerYear: monthly })),
+      'Year 1 is 20% interest. Less every year after.');
+  });
+
+  it('yearOneNote stays quiet for one year loans and zero interest', () => {
+    assert.equal(yearOneNote(yearsOf({ principal: 1200, annualRate: 10, years: 1, periodsPerYear: monthly })), null);
+    assert.equal(yearOneNote(yearsOf({ principal: 1200, annualRate: 0, years: 3, periodsPerYear: monthly })), null);
+  });
+
+  it('payoffNote names the current currency\'s unit, and needs a saving', () => {
+    assert.equal(payoffNote({ interestSaved: 100 }), 'Every extra euro you pay stops earning the bank interest.');
+    setCurrency('BAM');
+    try {
+      assert.equal(payoffNote({ interestSaved: 100 }), 'Every extra mark you pay stops earning the bank interest.');
+    } finally {
+      setCurrency('EUR');
+    }
+    assert.equal(payoffNote({ interestSaved: 0 }), null);
+  });
+
+  it('compareNote only appears when the lower payment costs more', () => {
+    const note = 'The lower payment isn\'t always the cheaper loan.';
+    assert.equal(compareNote(diff(-85, 2410, 2)), note);
+    assert.equal(compareNote(diff(85, -2410, -2)), note);
+    assert.equal(compareNote(diff(-20, -300, 0)), null);
+    assert.equal(compareNote(diff(-85, 2410, 2), { samePaymentFrequency: false }), null);
+  });
+});
+
+describe('loanLine', () => {
+  it('describes a loan in one line', () => {
+    assert.equal(loanLine({ principal: 10000, annualRate: 5, years: 5, periodsPerYear: FREQUENCIES.monthly }),
+      '€10,000.00 at 5% over 5 years, monthly');
+    assert.equal(loanLine({ principal: 15000, annualRate: 6.25, years: 1, periodsPerYear: FREQUENCIES.biweekly }),
+      '€15,000.00 at 6.25% over 1 year, every two weeks');
   });
 });

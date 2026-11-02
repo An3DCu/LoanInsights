@@ -2,11 +2,11 @@
 import { chartSlot, drawYearBars } from '../charts.js';
 import { scheduleCsv, scheduleFileName } from '../csv.js';
 import { downloadText } from '../download.js';
-import { interestShareSentence } from '../explain.js';
+import { interestNote, interestShareSentence, loanLine, yearOneNote } from '../explain.js';
 import { FREQUENCIES, amortizationSchedule, groupByYear, loanErrors, periodicPayment, summarize } from '../finance.js';
 import { formatMoney, formatNumber, splitMoney } from '../format.js';
 import { showToast } from '../toast.js';
-import { handleSubmit, readNumber, restoreFromLink } from './forms.js';
+import { handleSubmit, readNumber, restoreFromLink, showNote } from './forms.js';
 
 // The last result, kept for the "Tear off (CSV)" button.
 let last = null;
@@ -79,12 +79,6 @@ function yearRows(year) {
   return [$summary, $payments];
 }
 
-function describeLoan({ principal, annualRate, years, periodsPerYear }) {
-  const term = `${formatNumber(years)} ${years === 1 ? 'year' : 'years'}`;
-  const frequency = periodsPerYear === FREQUENCIES.monthly ? 'monthly' : 'every two weeks';
-  return `${formatMoney(principal)} at ${formatNumber(annualRate)}% over ${term}, ${frequency}`;
-}
-
 function render($section, result) {
   const { loan, schedule, payment, totalInterest, totalPaid, payments } = result;
   const show = (name, text) => $section.find(`[data-field="${name}"]`).text(text);
@@ -93,12 +87,11 @@ function render($section, result) {
   show('paymentLabel', loan.periodsPerYear === FREQUENCIES.monthly ? 'Monthly payment' : 'Payment every two weeks');
   show('payment', formatMoney(payment));
   show('totalInterest', formatMoney(totalInterest));
+  showNote($section.find('[data-note="interest"]'), interestNote(totalInterest));
   show('totalPaid', formatMoney(totalPaid));
   show('payments', formatNumber(payments));
 
-  show('receiptLoan', describeLoan(loan));
-  show('receiptInterest', formatMoney(totalInterest));
-  show('receiptPaid', formatMoney(totalPaid));
+  show('receiptLoan', loanLine(loan));
 
   // A longer loan makes a longer receipt. Every row is built first and inserted in
   // one go, so the page reflows once.
@@ -106,6 +99,14 @@ function render($section, result) {
   const $table = $section.find('.receipt-table');
   $table.children('tbody').remove();
   $table.append(years.flatMap(yearRows));
+
+  // The year 1 note sits in year 1's own row group, so it stays when the year is closed.
+  const note = yearOneNote(years);
+  if (note) {
+    $table.find('tbody.receipt-year').first().append($('<tr class="receipt-note">').append(
+      $('<td colspan="5">').append($('<span class="margin-note">').text(note)),
+    ));
+  }
 
   // The chart's story in words: visible under the chart, and the canvas's label.
   const sentence = interestShareSentence(years);

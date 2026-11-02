@@ -35,7 +35,6 @@
   <div class="col-lg-8">
     <div class="empty-state" data-empty-for="#calculator-results">
       <p class="empty-state-title">Nothing in the ledger yet.</p>
-      <p>Fill in the loan and work it out. The payment, the interest and the full schedule will be entered here.</p>
     </div>
     <section class="d-none" id="calculator-results" aria-labelledby="calc-results-heading">
       <h2 class="h4" id="calc-results-heading">Result</h2>
@@ -43,7 +42,10 @@
         <dt class="col-sm-6" data-field="paymentLabel">Monthly payment</dt>
         <dd class="col-sm-6 fs-4" data-field="payment"></dd>
         <dt class="col-sm-6">Total interest</dt>
-        <dd class="col-sm-6" data-field="totalInterest"></dd>
+        <dd class="col-sm-6">
+          <span data-field="totalInterest"></span>
+          <span class="margin-note d-none" data-note="interest"></span>
+        </dd>
         <dt class="col-sm-6">Total paid</dt>
         <dd class="col-sm-6" data-field="totalPaid"></dd>
         <dt class="col-sm-6">Number of payments</dt>
@@ -78,12 +80,6 @@
             </thead>
           </table>
         </div>
-        <dl class="receipt-totals num">
-          <dt>Total interest</dt>
-          <dd data-field="receiptInterest"></dd>
-          <dt>Total paid</dt>
-          <dd data-field="receiptPaid"></dd>
-        </dl>
       </div>
       <div class="result-actions mt-4">
         <button class="btn btn-outline-primary" type="button" data-action="tear-off">Tear off (CSV)</button>

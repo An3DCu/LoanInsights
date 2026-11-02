@@ -61,6 +61,11 @@ $receipt-tear: .625rem; // the height of the zigzag
   }
 }
 
+// A short receipt, like the worked example on Home.
+.receipt-small {
+  max-width: 26rem;
+}
+
 .receipt-head {
   padding-bottom: .75rem;
   margin-bottom: .5rem;

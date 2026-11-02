@@ -22,8 +22,10 @@ const files = [
   ['@fontsource/ibm-plex-sans/files/ibm-plex-sans-latin-600-normal.woff2', 'fonts'],
   ['@fontsource/ibm-plex-mono/files/ibm-plex-mono-latin-400-normal.woff2', 'fonts'],
   ['@fontsource/ibm-plex-mono/files/ibm-plex-mono-latin-600-normal.woff2', 'fonts'],
+  ['@fontsource/caveat/files/caveat-latin-500-normal.woff2', 'fonts'],
   ['@fontsource/ibm-plex-sans/LICENSE', 'fonts', 'IBM-Plex-Sans-OFL.txt'],
   ['@fontsource/ibm-plex-mono/LICENSE', 'fonts', 'IBM-Plex-Mono-OFL.txt'],
+  ['@fontsource/caveat/LICENSE', 'fonts', 'Caveat-OFL.txt'],
 ];
 
 rmSync(vendorDir, { recursive: true, force: true });

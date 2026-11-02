@@ -1,5 +1,5 @@
 <h1>Compare two loans</h1>
-<p>Two offers, side by side. A lower payment can still cost more in the end, so both are shown down to the total interest and the total paid.</p>
+<p>Two offers, side by side, down to the total interest and the total paid.</p>
 
 <form id="compare-form" novalidate>
   <div class="alert alert-danger d-none" role="alert" data-form-error></div>
@@ -67,21 +67,21 @@
 
 <div class="empty-state mt-4" data-empty-for="#compare-results">
   <p class="empty-state-title">Nothing compared yet.</p>
-  <p>Fill in both loans and compare them. The difference will be entered here, line by line.</p>
 </div>
 <section class="d-none mt-4" id="compare-results" aria-labelledby="compare-results-heading">
   <h2 class="h4" id="compare-results-heading">Result</h2>
   <p class="lead" aria-live="polite" data-field="sentence"></p>
+  <p class="margin-note d-none" data-note="compare"></p>
 
   <div class="table-responsive">
     <table class="table num">
-      <caption>Loan A and loan B side by side. The last column is B minus A.</caption>
+      <caption class="visually-hidden">Loan A and loan B side by side</caption>
       <thead>
         <tr>
           <th scope="col"><span class="visually-hidden">Detail</span></th>
           <th class="text-end" scope="col">Loan A</th>
           <th class="text-end" scope="col">Loan B</th>
-          <th class="text-end" scope="col">Difference</th>
+          <th class="text-end" scope="col">B minus A</th>
         </tr>
       </thead>
       <tbody>

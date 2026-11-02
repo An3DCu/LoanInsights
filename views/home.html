@@ -1,11 +1,31 @@
 <h1>Loan Insights</h1>
-<p class="lead">See what a loan really costs, compare two offers, and find out what paying extra saves you.</p>
+<p class="lead">What a loan really costs, before you sign.</p>
 
-<div class="row g-3 mt-2">
+<section class="mt-4" id="home-example" aria-labelledby="home-example-heading">
+  <h2 class="h5" id="home-example-heading">For example, a small car loan</h2>
+  <div class="receipt receipt-small">
+    <div class="receipt-head">
+      <p class="receipt-title">Loan Insights</p>
+      <p data-field="loan"></p>
+    </div>
+    <dl class="receipt-totals num">
+      <dt>Each month</dt>
+      <dd data-field="payment"></dd>
+      <dt>Total interest</dt>
+      <dd data-field="interest"></dd>
+      <dt>Total paid</dt>
+      <dd data-field="paid"></dd>
+    </dl>
+  </div>
+  <a class="btn btn-primary mt-4" data-field="link" href="#/calculator">Try your own numbers</a>
+</section>
+
+<h2 class="h5 mt-5">The tools</h2>
+<div class="row g-3">
   <div class="col-md-4">
     <div class="card h-100">
       <div class="card-body">
-        <h2 class="h5 card-title"><a class="stretched-link" href="#/calculator">Calculator</a></h2>
+        <h3 class="h5 card-title"><a class="stretched-link" href="#/calculator">Calculator</a></h3>
         <p class="card-text">Your payment, the total interest, and every payment until the loan is gone.</p>
       </div>
     </div>
@@ -13,7 +33,7 @@
   <div class="col-md-4">
     <div class="card h-100">
       <div class="card-body">
-        <h2 class="h5 card-title"><a class="stretched-link" href="#/compare">Compare loans</a></h2>
+        <h3 class="h5 card-title"><a class="stretched-link" href="#/compare">Compare loans</a></h3>
         <p class="card-text">Two offers side by side, and what the difference costs you.</p>
       </div>
     </div>
@@ -21,7 +41,7 @@
   <div class="col-md-4">
     <div class="card h-100">
       <div class="card-body">
-        <h2 class="h5 card-title"><a class="stretched-link" href="#/payoff">Pay off faster</a></h2>
+        <h3 class="h5 card-title"><a class="stretched-link" href="#/payoff">Pay off faster</a></h3>
         <p class="card-text">How much time and interest an extra payment, or paying every two weeks, saves.</p>
       </div>
     </div>
