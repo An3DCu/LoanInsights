@@ -1,5 +1,6 @@
 // Helpers the calculator pages share: read a field, show and clear errors, and keep
 // the form's values in the address so a result can be shared.
+import { announce } from '../announce.js';
 import { LoanInputError } from '../finance.js';
 import { parseAmount } from '../format.js';
 import { SHARE_FIELDS, fromQuery, toQuery } from '../share.js';
@@ -149,6 +150,9 @@ export function handleSubmit({ form, results, check, calculate, render, route })
     render($section, result);
     $empty.addClass('d-none');
     $section.removeClass('d-none');
+    // The parts marked data-announce are read out, once the section is showing (a
+    // hidden element has no text to read).
+    announce($section.find('[data-announce]').get().map((el) => el.innerText).join(' '));
     writeLink($form, route);
   });
 }

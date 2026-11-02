@@ -44,6 +44,16 @@ $receipt-tear: .625rem; // the height of the zigzag
     }
   }
 
+  // The narrowest phones (320px) need a little less again. A small loan's receipt
+  // still fits; a mortgage's six-figure balances scroll inside the receipt.
+  @media (max-width: 359.98px) {
+    padding-inline: .25rem;
+
+    .receipt-table > :not(caption) > * > * {
+      padding-inline: .1rem;
+    }
+  }
+
   // The torn edge: a strip of the same paper, cut into a zigzag by a mask.
   &::after {
     position: absolute;
