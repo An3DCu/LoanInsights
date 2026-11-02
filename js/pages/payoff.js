@@ -1,11 +1,18 @@
 // Pay off faster page: the current plan next to either an extra payment or
 // accelerated bi-weekly payments.
-import { payoffSentence } from '../explain.js';
-import { acceleratedBiweekly, payoffWithExtra } from '../finance.js';
+import { chartSlot, drawBalanceLines } from '../charts.js';
+import { balanceSentence, payoffSentence } from '../explain.js';
+import { FREQUENCIES, acceleratedBiweekly, payoffWithExtra } from '../finance.js';
 import { formatDuration, formatMoney, formatNumber } from '../format.js';
 import { handleSubmit, readNumber } from './forms.js';
 
 const strategyOf = ($form) => $form.find('[name="strategy"]:checked').val();
+const chart = chartSlot();
+
+// Called by the router each time the page is shown; the cleanup destroys the chart.
+export function init() {
+  return () => chart.destroy();
+}
 
 // Show only the fields and labels that belong to the chosen plan.
 $(document).on('change', '#payoff-form [name="strategy"]', (event) => {
@@ -23,17 +30,30 @@ function calculate($form) {
 
   if (strategyOf($form) === 'accelerated') {
     const result = acceleratedBiweekly({ balance, annualRate, payment });
-    return { now: result.monthly, plan: result.accelerated, planHeading: 'Accelerated bi-weekly', ...result };
+    return {
+      ...result,
+      now: result.monthly,
+      plan: result.accelerated,
+      planHeading: 'Accelerated bi-weekly',
+      planLabel: 'with accelerated bi-weekly payments',
+      nowPerYear: FREQUENCIES.monthly,
+      planPerYear: FREQUENCIES.biweekly,
+      balance,
+    };
   }
 
-  const result = payoffWithExtra({
+  const periodsPerYear = readNumber($form, 'periodsPerYear');
+  const result = payoffWithExtra({ balance, annualRate, payment, extra: readNumber($form, 'extra'), periodsPerYear });
+  return {
+    ...result,
+    now: result.original,
+    plan: result.withExtra,
+    planHeading: 'With extra',
+    planLabel: 'with the extra payment',
+    nowPerYear: periodsPerYear,
+    planPerYear: periodsPerYear,
     balance,
-    annualRate,
-    payment,
-    extra: readNumber($form, 'extra'),
-    periodsPerYear: readNumber($form, 'periodsPerYear'),
-  });
-  return { now: result.original, plan: result.withExtra, planHeading: 'With extra', ...result };
+  };
 }
 
 function render($section, result) {
@@ -51,6 +71,15 @@ function render($section, result) {
   cells('time', formatDuration(now.years), formatDuration(plan.years));
   cells('totalInterest', formatMoney(now.totalInterest), formatMoney(plan.totalInterest));
   cells('totalPaid', formatMoney(now.totalPaid), formatMoney(plan.totalPaid));
+
+  // The chart's story in words: visible under the chart, and the canvas's label.
+  const sentence = balanceSentence(now.years, plan.years, result.planLabel);
+  $section.find('[data-field="chartSummary"]').text(sentence);
+  const canvas = $section.find('.chart canvas').attr('aria-label', `Line chart of the balance over time. ${sentence}`)[0];
+  chart.show(() => drawBalanceLines(canvas, result)).catch((error) => {
+    console.error(error);
+    $section.find('[data-field="chartSummary"]').text(`${sentence} (The chart couldn't load, but the table above is complete.)`);
+  });
 }
 
 handleSubmit('#payoff-form', '#payoff-results', calculate, render);

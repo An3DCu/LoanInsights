@@ -14,13 +14,15 @@
 }
 
 // Money lines up in columns when every digit has the same width.
-// Labels inside a .num block (dt, th) stay in the text face, so only values are mono.
+// Labels inside a .num block (dt, th, caption) stay in the text face, so only values
+// are mono.
 .num {
   font-family: $font-family-monospace;
   font-variant-numeric: tabular-nums;
 
   dt,
-  th {
+  th,
+  caption {
     font-family: $font-family-base;
   }
 }
@@ -79,6 +81,23 @@ a {
   .form-check-input:checked[type="radio"] {
     --#{$prefix}form-check-bg-image: #{escape-svg(url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='-4 -4 8 8'><circle r='2' fill='#{$paper-dark}'/></svg>"))};
   }
+}
+
+// Charts: Chart.js sizes the canvas to its box, so the box needs a height. The caption
+// says in words what the chart shows.
+.chart {
+  margin: 0;
+}
+
+.chart-canvas {
+  position: relative;
+  height: 16rem;
+}
+
+.chart figcaption {
+  margin-top: .5rem;
+  font-size: $font-size-sm;
+  color: var(--bs-secondary-color);
 }
 
 // The light/dark switch shows when it's on.

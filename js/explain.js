@@ -45,6 +45,24 @@ export function compareSentence({ difference }, { samePaymentFrequency = true } 
   return `${sentence}.`;
 }
 
+// The story of the principal vs interest chart, in words, for anyone who can't see it:
+// "In year 1, 81% of what you pay goes to interest. By year 30, it's 2%."
+export function interestShareSentence(years) {
+  const share = (year) => (year.paid > 0 ? Math.round((year.interest / year.paid) * 100) : 0);
+  const first = years[0];
+  const last = years.at(-1);
+  if (first.interest === 0) return 'There\'s no interest, so every payment goes to the loan itself.';
+  if (years.length === 1) return `Over the year, ${share(first)}% of what you pay goes to interest.`;
+  return `In year 1, ${share(first)}% of what you pay goes to interest. By year ${last.year}, it's ${share(last)}%.`;
+}
+
+// The story of the balance chart: "The balance reaches zero after 15 years and 7 months
+// as you pay now, and after 12 years and 4 months with the extra payment."
+export function balanceSentence(nowYears, planYears, planLabel) {
+  return `The balance reaches zero after ${formatDuration(nowYears)} as you pay now, `
+    + `and after ${formatDuration(planYears)} ${planLabel}.`;
+}
+
 // What a payoff plan saves: "You finish 4 years and 5 months sooner and pay
 // €29,420.00 less in interest."
 export function payoffSentence({ yearsSaved, interestSaved }) {
