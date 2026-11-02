@@ -104,6 +104,34 @@ function makeRow(number, principalCents, interestCents, balanceCents) {
   };
 }
 
+// The schedule in years: each year's payments plus its totals and the balance left
+// at the end of it. Bi-weekly loans have 26 payments to a year. A last, shorter year
+// holds whatever payments are left.
+export function groupByYear(schedule, periodsPerYear) {
+  checkFrequency(periodsPerYear);
+  const years = [];
+  for (let start = 0; start < schedule.length; start += periodsPerYear) {
+    const payments = schedule.slice(start, start + periodsPerYear);
+    let paid = 0;
+    let principal = 0;
+    let interest = 0;
+    for (const row of payments) {
+      paid += toCents(row.payment);
+      principal += toCents(row.principal);
+      interest += toCents(row.interest);
+    }
+    years.push({
+      year: years.length + 1,
+      payments,
+      paid: fromCents(paid),
+      principal: fromCents(principal),
+      interest: fromCents(interest),
+      balance: payments.at(-1).balance,
+    });
+  }
+  return years;
+}
+
 // Totals for any schedule. Summed in cents so 360 rows don't drift.
 export function summarize(schedule) {
   let paid = 0;
