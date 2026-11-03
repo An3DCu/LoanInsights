@@ -76,6 +76,35 @@ $receipt-tear: .625rem; // the height of the zigzag
   max-width: 26rem;
 }
 
+// The 404's receipt: the address that wasn't found, stamped VOID across it in the
+// wordmark's double border. The stamp is decoration; "No such page." says the same.
+.receipt-address {
+  overflow-wrap: anywhere;
+}
+
+.receipt-void-line {
+  padding-block: 1.5rem;
+  margin-bottom: 0;
+}
+
+// On the right, so it never covers "No such page." on a narrow phone.
+.void-stamp {
+  position: absolute;
+  top: 55%;
+  right: .75rem;
+  padding: 0 .75rem;
+  margin: 0;
+  font-size: 1.75rem;
+  font-weight: $font-weight-bold;
+  color: var(--li-stamp);
+  text-transform: uppercase;
+  letter-spacing: .3em;
+  pointer-events: none;
+  border: 3px double var(--li-stamp);
+  border-radius: $border-radius-lg;
+  transform: translateY(-50%) rotate(-12deg);
+}
+
 .receipt-head {
   padding-bottom: .75rem;
   margin-bottom: .5rem;

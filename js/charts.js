@@ -13,7 +13,7 @@ import { formatDuration, formatMoney, formatMoneyShort } from './format.js';
 let loading = null;
 
 // A plain <script src> tag, not $.getScript: jQuery runs same-origin scripts it fetches
-// as inline code, which the site's Content Security Policy will block.
+// as inline code, which the site's Content Security Policy blocks.
 function loadChartJs() {
   if (window.Chart) return Promise.resolve(window.Chart);
   loading ??= new Promise((resolve, reject) => {

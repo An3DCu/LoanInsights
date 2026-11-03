@@ -7,6 +7,7 @@ import { showToast } from './toast.js';
 import * as calculatorPage from './pages/calculator.js';
 import * as comparePage from './pages/compare.js';
 import * as homePage from './pages/home.js';
+import * as notFoundPage from './pages/notfound.js';
 import * as payoffPage from './pages/payoff.js';
 
 const routes = {
@@ -16,7 +17,7 @@ const routes = {
   '/payoff': { view: 'payoff', title: 'Pay off faster', page: payoffPage },
   '/about': { view: 'about', title: 'About' },
 };
-const notFound = { view: '404', title: 'Page not found' };
+const notFound = { view: '404', title: 'Page not found', page: notFoundPage };
 
 // The hash belongs to the router, so the skip link moves focus itself instead of
 // letting the browser jump to #app, which the router would read as a route.
