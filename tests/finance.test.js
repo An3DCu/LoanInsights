@@ -3,6 +3,7 @@ import assert from 'node:assert/strict';
 
 import {
   FREQUENCIES,
+  LIMITS,
   LoanInputError,
   acceleratedBiweekly,
   amortizationSchedule,
@@ -248,7 +249,9 @@ describe('input checks', () => {
     ['principal', 'negative', { principal: -5 }],
     ['principal', 'zero', { principal: 0 }],
     ['principal', 'infinite (1e309)', { principal: 1e309 }],
-    ['principal', 'too large', { principal: 1e13 }],
+    ['principal', 'too large', { principal: 1e11 }],
+    ['principal', 'under a cent', { principal: 0.004 }],
+    ['principal', 'too little to split (€1 over 100 years)', { principal: 1, annualRate: 0, years: 100 }],
     ['annualRate', 'negative', { annualRate: -1 }],
     ['annualRate', 'above 100%', { annualRate: 101 }],
     ['years', 'zero', { years: 0 }],
@@ -309,5 +312,40 @@ describe('payoffErrors', () => {
 
   it('does not judge whether the payment covers the interest (the calculation does)', () => {
     assert.deepEqual(payoffErrors({ ...good, payment: 1 }), []);
+  });
+});
+
+describe('edge cases', () => {
+  const good = { principal: 10000, annualRate: 5, years: 5, periodsPerYear: monthly };
+  const messageFor = (loan) => loanErrors({ ...good, ...loan }).map((error) => error.message);
+
+  it('calls 1e309 too large, not "not a number"', () => {
+    assert.deepEqual(messageFor({ principal: 1e309 }), ['That\'s more than this ledger handles.']);
+    assert.deepEqual(messageFor({ years: 1e309 }), ['Terms over 100 years aren\'t handled here.']);
+  });
+
+  it('turns away amounts that round to zero cents, and accepts one cent', () => {
+    assert.deepEqual(messageFor({ principal: 0.004 }), ['The smallest amount here is one cent.']);
+    assert.deepEqual(messageFor({ principal: 0.01, years: 1 / 12 }), []);
+    assert.equal(amortizationSchedule({ ...good, principal: 0.01, years: 1 / 12 }).at(-1).balance, 0);
+  });
+
+  it('says when a loan is too small to split, only once every field is fine', () => {
+    assert.deepEqual(messageFor({ principal: 1, annualRate: 0, years: 100 }), ['That\'s too little to split into this many payments.']);
+    assert.deepEqual(messageFor({ principal: 1, annualRate: -1, years: 100 }).length, 1, 'the rate is reported, not the split');
+  });
+
+  it('keeps the worst case inside safe integers', () => {
+    for (const periodsPerYear of [monthly, biweekly]) {
+      const loan = { principal: LIMITS.maxAmount, annualRate: LIMITS.maxRate, years: LIMITS.maxYears, periodsPerYear };
+      const { totalPaid, totalInterest } = summarize(amortizationSchedule(loan));
+      assert.ok(Number.isSafeInteger(cents(totalPaid)), `total paid ${totalPaid}`);
+      assert.ok(Number.isSafeInteger(cents(totalInterest)));
+    }
+  });
+
+  it('turns away a payoff payment under a cent', () => {
+    const errors = payoffErrors({ balance: 1000, annualRate: 5, payment: 0.004, extra: 0, periodsPerYear: monthly });
+    assert.deepEqual(errors.map((error) => error.field), ['payment']);
   });
 });

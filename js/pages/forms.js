@@ -2,15 +2,23 @@
 // the form's values in the address so a result can be shared.
 import { announce } from '../announce.js';
 import { LoanInputError } from '../finance.js';
-import { parseAmount } from '../format.js';
+import { parseAmount, parseDecimal } from '../format.js';
 import { SHARE_FIELDS, fromQuery, toQuery } from '../share.js';
 
 export function field($form, name) {
   return $form.find(`[name="${name}"]`);
 }
 
+// Rates and terms are read with the decimal point only; money can have thousands
+// separators. Compare's fields are named like "a.annualRate".
+const DECIMAL_FIELDS = /(annualRate|years)$/;
+
+function parseField(name, text) {
+  return DECIMAL_FIELDS.test(name) ? parseDecimal(text) : parseAmount(text);
+}
+
 export function readNumber($form, name) {
-  return parseAmount(field($form, name).val());
+  return parseField(name, field($form, name).val());
 }
 
 // One field back to normal. setCustomValidity('') tells the browser it's valid again.
@@ -81,7 +89,7 @@ function shareableValues($form, fields) {
     } else if ($input.is('select')) {
       values[name] = $input.val();
     } else {
-      const number = parseAmount($input.val());
+      const number = parseField(name, $input.val());
       if (Number.isFinite(number)) values[name] = number;
     }
   }
@@ -103,8 +111,12 @@ export function restoreFromLink($form, params, route) {
   if (Object.keys(values).length === 0) return false;
   for (const [name, value] of Object.entries(values)) {
     const $input = field($form, name);
+    // A choice the form doesn't offer ("pay=weekly", "plan=foo") leaves the default
+    // in place; a menu has no way to show it, or to say what's wrong with it.
     if ($input.is(':radio')) {
       $input.filter((_, radio) => radio.value === value).prop('checked', true).trigger('change');
+    } else if ($input.is('select')) {
+      if ($input.find('option').is((_, option) => option.value === value)) $input.val(value);
     } else {
       $input.val(value);
     }

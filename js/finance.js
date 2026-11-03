@@ -7,7 +7,9 @@
 export const FREQUENCIES = { monthly: 12, biweekly: 26 };
 
 // Upper bounds keep every loop finite and every number inside safe integer range.
-export const LIMITS = { maxAmount: 1e12, maxRate: 100, maxYears: 100 };
+// The worst case, the largest amount at 100% for 100 years, pays back about
+// €1,000 billion: 1e14 cents, well under Number.MAX_SAFE_INTEGER (about 9e15).
+export const LIMITS = { maxAmount: 1e10, maxRate: 100, maxYears: 100 };
 
 // Thrown for input the math can't work with. `field` names the input at fault,
 // so the page can mark that field as invalid.
@@ -25,8 +27,10 @@ const fromCents = (cents) => cents / 100;
 // ---------------------------------------------------------------------------
 // Input checks
 
+// Infinity ("1e309") is a number, just a huge one, so it gets the "too large" message
+// from the checks below rather than this one.
 function requireNumber(field, value) {
-  if (typeof value !== 'number' || !Number.isFinite(value)) {
+  if (typeof value !== 'number' || Number.isNaN(value)) {
     throw new LoanInputError(field, 'That doesn\'t read as a number. Digits only, please.');
   }
 }
@@ -34,6 +38,7 @@ function requireNumber(field, value) {
 function checkAmount(field, value) {
   requireNumber(field, value);
   if (value <= 0) throw new LoanInputError(field, 'The amount has to be more than zero.');
+  if (toCents(value) < 1) throw new LoanInputError(field, 'The smallest amount here is one cent.');
   if (value > LIMITS.maxAmount) throw new LoanInputError(field, 'That\'s more than this ledger handles.');
 }
 
@@ -77,13 +82,16 @@ function collect(checks) {
   return errors;
 }
 
-export function loanErrors({ principal, annualRate, years, periodsPerYear }) {
-  return collect([
+export function loanErrors(loan) {
+  const { principal, annualRate, years, periodsPerYear } = loan;
+  const errors = collect([
     () => checkAmount('principal', principal),
     () => checkRate(annualRate),
     () => checkFrequency(periodsPerYear),
     () => checkYears(years, periodsPerYear),
   ]);
+  // Only once every field is fine on its own: is there enough to go round?
+  return errors.length ? errors : collect([() => paymentInCents(loan)]);
 }
 
 // Accelerated bi-weekly has no extra amount or frequency to check.
@@ -111,7 +119,10 @@ function paymentInCents({ principal, annualRate, years, periodsPerYear }) {
   const r = annualRate / 100 / periodsPerYear;
   const n = Math.round(years * periodsPerYear);
   const amount = r === 0 ? principal / n : (principal * r) / (1 - (1 + r) ** -n);
-  return { payment: Math.round(amount * 100), r, n };
+  const payment = Math.round(amount * 100);
+  // €1 over 100 years would be 1,200 payments of €0.00.
+  if (payment < 1) throw new LoanInputError('principal', 'That\'s too little to split into this many payments.');
+  return { payment, r, n };
 }
 
 // The regular payment, rounded to the cent.
