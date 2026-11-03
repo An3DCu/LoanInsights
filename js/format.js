@@ -99,17 +99,38 @@ export function formatDuration(years) {
 // "5,5" or "10.000,50". Returns NaN for anything that isn't a number, and leaves the range
 // checks to finance.js.
 export function parseAmount(text) {
-  const value = String(text ?? '').replace(/[\s€$£%]|KM/gi, '');
-  if (value === '') return Number.NaN;
+  const value = cleanNumber(text, /[\s€$£%]|KM/gi);
+  if (value === null) return Number.NaN;
 
-  // 10,000 or 1,234,567.89: commas group thousands.
-  if (/^-?\d{1,3}(,\d{3})+(\.\d+)?$/.test(value)) return Number(value.replaceAll(',', ''));
+  // 10,000 or 1,234,567.89: commas group thousands. A group never starts with 0, so
+  // "0,001" is a decimal.
+  if (/^-?[1-9]\d{0,2}(,\d{3})+(\.\d+)?$/.test(value)) return Number(value.replaceAll(',', ''));
   // 10.000 or 10.000,50: dots group thousands, the comma is the decimal point.
-  if (/^-?\d{1,3}(\.\d{3})+(,\d+)?$/.test(value)) return Number(value.replaceAll('.', '').replace(',', '.'));
-  // 5,5: a lone comma is a decimal point.
-  if (/^-?\d+,\d+$/.test(value)) return Number(value.replace(',', '.'));
+  if (/^-?[1-9]\d{0,2}(\.\d{3})+(,\d+)?$/.test(value)) return Number(value.replaceAll('.', '').replace(',', '.'));
+  return parsePlain(value);
+}
 
-  // Plain numbers, exponents included. "1e309" becomes Infinity, which finance.js
-  // rejects. Number() alone would also accept hex like "0x10", so check the shape first.
+// Rates and terms: nobody writes thousands in them, so a single dot or comma is
+// always the decimal point. "6.125" is a mortgage rate, not 6,125%.
+export function parseDecimal(text) {
+  const value = cleanNumber(text, /[\s%]/g);
+  return value === null ? Number.NaN : parsePlain(value);
+}
+
+// The text without the signs and spaces people type around a number, or null when
+// there's nothing left, or too much: no number here needs more than 40 characters,
+// and refusing longer text keeps a huge paste from tying up the patterns below.
+function cleanNumber(text, ignore) {
+  const raw = String(text ?? '');
+  if (raw.length > 40) return null;
+  const value = raw.replace(ignore, '');
+  return value === '' ? null : value;
+}
+
+// 5,5: a lone comma is a decimal point. Otherwise plain numbers, exponents included;
+// "1e309" becomes Infinity, which finance.js turns away as too large. Number() alone
+// would also accept hex like "0x10", so check the shape first.
+function parsePlain(value) {
+  if (/^-?\d+,\d+$/.test(value)) return Number(value.replace(',', '.'));
   return /^-?(\d+\.?\d*|\.\d+)(e[+-]?\d+)?$/i.test(value) ? Number(value) : Number.NaN;
 }

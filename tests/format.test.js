@@ -11,6 +11,7 @@ import {
   formatMoneyShort,
   formatNumber,
   parseAmount,
+  parseDecimal,
   setCurrency,
   splitMoney,
 } from '../js/format.js';
@@ -144,6 +145,8 @@ describe('parseAmount', () => {
     ['-200', -200],
     ['  7  ', 7],
     ['1e309', Infinity],
+    ['0,001', 0.001],
+    ['0.001', 0.001],
   ];
   for (const [text, expected] of cases) {
     it(`reads "${text}" as ${expected}`, () => assert.equal(parseAmount(text), expected));
@@ -151,5 +154,30 @@ describe('parseAmount', () => {
 
   for (const text of ['', '   ', 'abc', '10k', '1,2,3', '0x10', '1..2', null, undefined]) {
     it(`rejects ${JSON.stringify(text)}`, () => assert.ok(Number.isNaN(parseAmount(text))));
+  }
+
+  it('refuses text too long to be a number, without hanging on it', () => {
+    assert.ok(Number.isNaN(parseAmount('1'.repeat(41))));
+    const start = performance.now();
+    parseAmount(`${'1'.repeat(1_000_000)}x`);
+    assert.ok(performance.now() - start < 50);
+  });
+});
+
+describe('parseDecimal', () => {
+  const cases = [
+    ['6.125', 6.125],
+    ['6,125', 6.125],
+    ['1.500', 1.5],
+    ['4,25%', 4.25],
+    [' 30 ', 30],
+    ['.5', 0.5],
+  ];
+  for (const [text, expected] of cases) {
+    it(`reads "${text}" as ${expected}`, () => assert.equal(parseDecimal(text), expected));
+  }
+
+  for (const text of ['', 'abc', '1,2,3', '1.000,5', '€5', '0x10', '1'.repeat(41)]) {
+    it(`rejects ${JSON.stringify(text.length > 20 ? `${text.slice(0, 5)}…` : text)}`, () => assert.ok(Number.isNaN(parseDecimal(text))));
   }
 });
