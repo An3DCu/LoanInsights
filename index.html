@@ -2,6 +2,10 @@
 <html lang="en">
 <head>
   <meta charset="utf-8">
+  <!-- Only this site's own files run or load. data: is for the SVG grain and icons
+       drawn in the CSS. GitHub Pages can't send headers, so the policy is a meta tag,
+       which can't set frame-ancestors. -->
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' data:; object-src 'none'; base-uri 'self'; form-action 'self'">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Loan Insights</title>
   <meta name="description" content="Work out loan payments, compare two loans and see what extra payments save. Runs in your browser.">
