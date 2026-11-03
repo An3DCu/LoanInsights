@@ -112,8 +112,11 @@ function render($section, result) {
   const sentence = interestShareSentence(years);
   show('chartSummary', sentence);
   const canvas = $section.find('.chart canvas').attr('aria-label', `Bar chart of principal and interest per year. ${sentence}`)[0];
+  // If Chart.js can't load, the empty frame goes and the caption says why.
+  const $frame = $(canvas).closest('.chart-canvas').removeClass('d-none');
   chart.show(() => drawYearBars(canvas, years)).catch((error) => {
     console.error(error);
+    $frame.addClass('d-none');
     show('chartSummary', `${sentence} (The chart couldn't load, but the numbers above and below are complete.)`);
   });
 }

@@ -39,9 +39,13 @@ export function createRouter({ routes, notFound, $outlet, $nav, onRender }) {
     });
   }
 
+  // Set out like an empty state, in the same voice, with a way to ask again.
   function showLoadError() {
-    const $message = $('<div class="alert alert-warning" role="alert">')
-      .text('This page didn\'t load. Check your connection and try again.');
+    const $message = $('<div class="empty-state" role="alert">').append(
+      $('<p class="empty-state-title">').text('This page didn\'t come through.'),
+      $('<p>').text('Check your connection, then try again.'),
+      $('<button class="btn btn-outline-primary" type="button">').text('Try again').on('click', render),
+    );
     $outlet.empty().append($message);
   }
 

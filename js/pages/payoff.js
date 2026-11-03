@@ -90,8 +90,11 @@ function render($section, result) {
   const sentence = balanceSentence(now.years, plan.years, result.planLabel);
   $section.find('[data-field="chartSummary"]').text(sentence);
   const canvas = $section.find('.chart canvas').attr('aria-label', `Line chart of the balance over time. ${sentence}`)[0];
+  // If Chart.js can't load, the empty frame goes and the caption says why.
+  const $frame = $(canvas).closest('.chart-canvas').removeClass('d-none');
   chart.show(() => drawBalanceLines(canvas, result)).catch((error) => {
     console.error(error);
+    $frame.addClass('d-none');
     $section.find('[data-field="chartSummary"]').text(`${sentence} (The chart couldn't load, but the table above is complete.)`);
   });
 }

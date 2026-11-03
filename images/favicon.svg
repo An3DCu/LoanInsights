@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
+  <!-- The wordmark's stamp, shrunk: LI in a double border, stamp red on paper.
+       Drawn as strokes, because a favicon can't load the site's fonts. -->
+  <style>
+    .paper { fill: #f6f1e7; }
+    .stamp { fill: none; stroke: #a33429; }
+    @media (prefers-color-scheme: dark) {
+      .paper { fill: #141b2d; }
+      .stamp { stroke: #e17a6d; }
+    }
+  </style>
+  <rect class="paper" width="32" height="32" rx="6"/>
+  <g class="stamp" transform="rotate(-6 16 16)" stroke-linecap="square">
+    <rect x="3.5" y="6.5" width="25" height="19" rx="2" stroke-width="2"/>
+    <rect x="6.5" y="9.5" width="19" height="13" rx="1" stroke-width="1"/>
+    <path d="M11 12.5v7h4.5M18 12.5h4M20 12.5v7M18 19.5h4" stroke-width="2"/>
+  </g>
+</svg>
