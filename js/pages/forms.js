@@ -28,7 +28,7 @@ function clearField($input) {
   $(`#${$input.attr('aria-describedby')}`).text('');
 }
 
-export function clearErrors($form) {
+function clearErrors($form) {
   clearField($form.find('.is-invalid'));
   $form.find('[data-form-error]').addClass('d-none').text('');
 }
@@ -38,7 +38,7 @@ export function clearErrors($form) {
 // API agrees (form.checkValidity() is false, the field matches :invalid). Focus goes to
 // the first one. Errors without a field, and a count when there's more than one, show
 // at the top of the form.
-export function showErrors($form, errors) {
+function showErrors($form, errors) {
   const unplaced = [];
   let $first = null;
   for (const error of errors) {
