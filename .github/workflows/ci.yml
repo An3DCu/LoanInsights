@@ -1,0 +1,62 @@
+# Tests and builds every pull request and every push to main. A push to main also
+# publishes the built site to GitHub Pages, so css/ and vendor/ never need committing.
+#
+# Actions are pinned to a commit, not a tag (a tag can be moved); the comment says
+# which release that commit is.
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: 24
+          cache: npm
+
+      # npm ci installs exactly what package-lock.json says, or fails.
+      - run: npm ci
+      - run: npm test
+      - run: npm run build
+
+      # Only what the browser needs: no node_modules, Sass sources, tests or scripts.
+      - name: Collect the site
+        if: github.event_name == 'push'
+        run: |
+          mkdir _site
+          cp -r index.html css js views vendor images _site/
+
+      - uses: actions/upload-pages-artifact@fc324d3547104276b827a68afc52ff2a11cc49c9 # v5.0.0
+        if: github.event_name == 'push'
+        with:
+          path: _site
+
+  deploy:
+    if: github.event_name == 'push'
+    needs: build
+    runs-on: ubuntu-24.04
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    # One deploy at a time; a newer push waits rather than cancelling one halfway.
+    concurrency:
+      group: pages
+      cancel-in-progress: false
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@368f82528645a54fb793d4d04e342629a3f51346 # v5.0.1
